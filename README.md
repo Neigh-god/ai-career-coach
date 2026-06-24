@@ -1,19 +1,21 @@
-# 🎯 AI Career Coach
+﻿# ðŸŽ¯ AI Career Coach
 
 > An AI-powered career development platform that helps students and job seekers improve their resumes, prepare for interviews, identify skill gaps, and track their progress over time.
 
 ![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.138+-green.svg)
+
+![AI Career Coach Screenshot](screenshot.png)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.58+-red.svg)
 
-## ✨ Features
+## âœ¨ Features
 
-- **📄 Resume Analyzer** — Upload PDF/DOCX, get ATS score, strengths/weaknesses
-- **🔍 Skill Gap Analysis** — Compare skills against 5 target roles
-- **🎤 AI Interview Simulator** — Technical, HR, Behavioral interviews with evaluation
-- **📊 Career Report** — Combined readiness score + personalized learning roadmap
+- **ðŸ“„ Resume Analyzer** â€” Upload PDF/DOCX, get ATS score, strengths/weaknesses
+- **ðŸ” Skill Gap Analysis** â€” Compare skills against 5 target roles
+- **ðŸŽ¤ AI Interview Simulator** â€” Technical, HR, Behavioral interviews with evaluation
+- **ðŸ“Š Career Report** â€” Combined readiness score + personalized learning roadmap
 
-## 🛠️ Tech Stack
+## ðŸ› ï¸ Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
@@ -24,9 +26,9 @@
 | Resume Parsing | pdfplumber, python-docx |
 | AI | OpenAI API (planned) |
 
-## 📁 Project Structure
+## ðŸ“ Project Structure
 
-## 🚀 Quick Start
+## ðŸš€ Quick Start
 
 ```bash
 # Clone the repo
@@ -50,8 +52,8 @@ uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 
 # Start frontend (Terminal 2)
 streamlit run frontend/app.py
- # 🎯 AI Career Coach
+ # ðŸŽ¯ AI Career Coach
 ...
 [all the content]
 ...
-Built with ❤️ using FastAPI + Streamlit
+Built with â¤ï¸ using FastAPI + Streamlit
