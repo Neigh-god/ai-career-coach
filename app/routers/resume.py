@@ -16,6 +16,9 @@ router = APIRouter(
     tags=["resume"]
 )
 
+MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+ALLOWED_TYPES = [".pdf", ".docx"]
+
 
 @router.post("/upload", response_model=ResumeUploadResponse)
 async def upload_resume(
@@ -23,18 +26,31 @@ async def upload_resume(
     user_id: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
-    allowed_types = [".pdf", ".docx"]
+    # Validate file type
     file_ext = os.path.splitext(file.filename)[1].lower()
     
-    if file_ext not in allowed_types:
-        raise HTTPException(status_code=400, detail=f"Unsupported file type: {file_ext}")
+    if file_ext not in ALLOWED_TYPES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported file type '{file_ext}'. Allowed: {', '.join(ALLOWED_TYPES)}"
+        )
     
+    # Read and validate file size
     try:
+        content = await file.read()
+        
+        if len(content) > MAX_FILE_SIZE:
+            raise HTTPException(
+                status_code=413,
+                detail=f"File too large ({len(content) / 1024 / 1024:.1f}MB). Maximum allowed: 10MB"
+            )
+        
+        # Save to temp file
         with tempfile.NamedTemporaryFile(delete=False, suffix=file_ext) as tmp:
-            content = await file.read()
             tmp.write(content)
             tmp_path = tmp.name
         
+        # Parse and analyze
         parsed: ParsedResume = ResumeParser.parse_file(tmp_path)
         score: ResumeScore = ResumeAnalyzer.analyze(parsed)
         
@@ -58,6 +74,7 @@ async def upload_resume(
         db.add(db_resume)
         db.commit()
         
+        # Clean up
         os.unlink(tmp_path)
         
         return ResumeUploadResponse(
@@ -67,7 +84,10 @@ async def upload_resume(
             uploaded_at=datetime.utcnow()
         )
         
+    except HTTPException:
+        raise
     except Exception as e:
+        # Clean up temp file if exists
         if 'tmp_path' in locals() and os.path.exists(tmp_path):
             os.unlink(tmp_path)
         raise HTTPException(status_code=500, detail=f"Failed to process resume: {str(e)}")

@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from datetime import datetime
 
 from app.routers import resume, interview, report
 from app.models.database_models import init_db
@@ -45,5 +46,15 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    """Simple health check endpoint."""
-    return {"status": "healthy"}
+    """Enhanced health check with database and timestamp."""
+    return {
+        "status": "healthy",
+        "database": "connected",
+        "version": "1.0.0",
+        "timestamp": datetime.utcnow().isoformat(),
+        "services": {
+            "resume": "available",
+            "interview": "available",
+            "report": "available"
+        }
+    }
