@@ -529,10 +529,10 @@ elif page == "ℹ️ About":
     dev_col1, dev_col2 = st.columns([1, 2])
     
     with dev_col1:
-        # Replace with your actual photo URL or local path
+        # Your photo
         st.image("frontend/assets/me.png", 
-         caption="Upam - Developer", 
-         use_container_width=True)
+                 caption="Upam - Developer", 
+                 use_container_width=True)
         
         # Social links
         st.markdown("""
@@ -566,35 +566,8 @@ elif page == "ℹ️ About":
         
         - 💼 Open to collaboration and opportunities
         - 🚀 Always building something new
-        - 📧 Reach out: [your-email@example.com]
+        - 📧 Email: **majiupam@gmail.com**
         """)
-    
-    st.divider()
-    
-    # Screenshot Gallery
-    st.markdown("""
-    <div style="text-align: center; padding: 10px 0;">
-        <h2 style="color: #00d4aa;">📸 App Screenshots</h2>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Replace these with your actual screenshots
-    ss_col1, ss_col2, ss_col3 = st.columns(3)
-    
-    with ss_col1:
-        st.image("https://via.placeholder.com/400x300.png?text=Resume+Analyzer", 
-                 caption="Resume Analysis Dashboard", 
-                 use_container_width=True)
-    
-    with ss_col2:
-        st.image("https://via.placeholder.com/400x300.png?text=Interview+Practice", 
-                 caption="Interview Practice Mode", 
-                 use_container_width=True)
-    
-    with ss_col3:
-        st.image("https://via.placeholder.com/400x300.png?text=Career+Report", 
-                 caption="Career Report Generation", 
-                 use_container_width=True)
     
     st.divider()
     
