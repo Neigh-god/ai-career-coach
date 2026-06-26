@@ -8,6 +8,8 @@
 
 ![AI Career Coach Screenshot](screenshot.png)
 
+🚀 **Live Demo**: [https://ai-career-coach-p2vuy7ygef3epwbruyowkq.streamlit.app/](https://ai-career-coach-p2vuy7ygef3epwbruyowkq.streamlit.app/)
+
 ## ✨ Features
 
 - **📄 Resume Analyzer** — Upload PDF/DOCX, get ATS score, strengths/weaknesses
