@@ -93,7 +93,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ========== API CONFIG ==========
-API_URL = "http://127.0.0.1:8000"
+API_URL = "https://ai-career-coach-5njl.onrender.com"
 
 # ========== SIDEBAR ==========
 with st.sidebar:
