@@ -1,12 +1,10 @@
-"""Database connection."""
-from supabase import Client, create_client
-from app.config import get_settings
+"""Database connection and initialization."""
+from app.models.database_models import init_db, get_db
 
-_client = None
+# Initialize tables on import
+init_db()
 
-def get_db():
-    global _client
-    if _client is None:
-        s = get_settings()
-        _client = create_client(s.SUPABASE_URL, s.SUPABASE_KEY)
-    return _client
+
+def get_db_session():
+    """Get a database session."""
+    return next(get_db())

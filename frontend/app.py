@@ -1,241 +1,413 @@
 import streamlit as st
 import requests
+from datetime import datetime
 
-# API base URL
-API_URL = "http://127.0.0.1:8000"
-
+# ========== PAGE CONFIG ==========
 st.set_page_config(
     page_title="AI Career Coach",
     page_icon="🎯",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-st.title("🎯 AI Career Coach")
-st.markdown("Your personal AI-powered career development assistant.")
-
-# Sidebar navigation
-page = st.sidebar.radio(
-    "Choose a feature",
-    ["🏠 Home", "📄 Resume Analyzer", "🎤 Interview Practice", "📊 Career Report"]
-)
-
-# ========== HOME PAGE ==========
-if page == "🏠 Home":
-    st.header("Welcome!")
-    st.write("""
-    AI Career Coach helps you:
-    - **Analyze your resume** for ATS compatibility
-    - **Practice interviews** with AI-generated questions
-    - **Identify skill gaps** between your profile and target role
-    - **Generate career reports** with actionable next steps
+# ========== CUSTOM CSS ==========
+st.markdown("""
+<style>
+    /* Main theme */
+    .main {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
     
-    Use the sidebar to navigate between features.
-    """)
+    /* Headers */
+    h1 {
+        color: #00d4aa !important;
+        font-weight: 700 !important;
+    }
+    h2 {
+        color: #e94560 !important;
+        font-weight: 600 !important;
+    }
+    h3 {
+        color: #0f3460 !important;
+    }
+    
+    /* Cards */
+    .stCard {
+        background: rgba(255,255,255,0.05);
+        border-radius: 15px;
+        padding: 20px;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    /* Buttons */
+    .stButton>button {
+        background: linear-gradient(90deg, #00d4aa, #00a8e8);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        padding: 12px 30px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    .stButton>button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(0,212,170,0.4);
+    }
+    
+    /* Progress bars */
+    .stProgress>div>div {
+        background: linear-gradient(90deg, #00d4aa, #00a8e8);
+    }
+    
+    /* Sidebar */
+    .css-1d391kg {
+        background: #0f0f23;
+    }
+    
+    /* Success/Error messages */
+    .stSuccess {
+        background: rgba(0,212,170,0.1);
+        border-left: 4px solid #00d4aa;
+    }
+    .stError {
+        background: rgba(233,69,96,0.1);
+        border-left: 4px solid #e94560;
+    }
+    
+    /* Metric cards */
+    [data-testid="stMetricValue"] {
+        color: #00d4aa !important;
+        font-size: 2rem !important;
+        font-weight: 700 !important;
+    }
+    [data-testid="stMetricLabel"] {
+        color: #8892b0 !important;
+    }
+    
+    /* Info boxes */
+    .stInfo {
+        background: rgba(0,168,232,0.1);
+        border-left: 4px solid #00a8e8;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# ========== API CONFIG ==========
+API_URL = "http://127.0.0.1:8000"
+
+# ========== SIDEBAR ==========
+with st.sidebar:
+    st.markdown("""
+    <div style="text-align: center; padding: 20px 0;">
+        <h1 style="color: #00d4aa; font-size: 1.5rem;">🎯 AI Career Coach</h1>
+        <p style="color: #8892b0; font-size: 0.8rem;">Your AI Career Partner</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.divider()
+    
+    page = st.radio(
+        "Navigate",
+        ["🏠 Home", "📄 Resume Analyzer", "🎤 Interview Practice", "📊 Career Report"],
+        label_visibility="collapsed"
+    )
+    
+    st.divider()
     
     # Health check
     try:
-        response = requests.get(f"{API_URL}/health", timeout=5)
+        response = requests.get(f"{API_URL}/health", timeout=3)
         if response.status_code == 200:
-            st.success("✅ Backend API is running")
+            st.success("🟢 API Connected")
         else:
-            st.warning("⚠️ Backend API returned an error")
-    except requests.exceptions.ConnectionError:
-        st.error("❌ Cannot connect to backend API. Make sure the server is running on http://127.0.0.1:8000")
-    except Exception as e:
-        st.error(f"❌ Error: {str(e)}")
+            st.warning("🟡 API Issue")
+    except:
+        st.error("🔴 API Offline")
+
+# ========== HOME PAGE ==========
+if page == "🏠 Home":
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        st.markdown("""
+        <h1 style="font-size: 3rem; margin-bottom: 0;">Welcome to</h1>
+        <h1 style="font-size: 3.5rem; color: #00d4aa; margin-top: 0;">AI Career Coach</h1>
+        <p style="font-size: 1.2rem; color: #8892b0; line-height: 1.6;">
+            Your personal AI-powered career development assistant. 
+            Analyze resumes, practice interviews, identify skill gaps, 
+            and generate actionable career reports.
+        </p>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        # Feature cards
+        feat_col1, feat_col2, feat_col3, feat_col4 = st.columns(4)
+        
+        with feat_col1:
+            st.markdown("""
+            <div style="background: rgba(0,212,170,0.1); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(0,212,170,0.3);">
+                <h2 style="font-size: 2rem; margin: 0;">📄</h2>
+                <p style="color: #00d4aa; font-weight: 600; margin: 10px 0 0 0;">Resume<br>Analyzer</p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with feat_col2:
+            st.markdown("""
+            <div style="background: rgba(0,168,232,0.1); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(0,168,232,0.3);">
+                <h2 style="font-size: 2rem; margin: 0;">🔍</h2>
+                <p style="color: #00a8e8; font-weight: 600; margin: 10px 0 0 0;">Skill Gap<br>Analysis</p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with feat_col3:
+            st.markdown("""
+            <div style="background: rgba(233,69,96,0.1); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(233,69,96,0.3);">
+                <h2 style="font-size: 2rem; margin: 0;">🎤</h2>
+                <p style="color: #e94560; font-weight: 600; margin: 10px 0 0 0;">Interview<br>Practice</p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with feat_col4:
+            st.markdown("""
+            <div style="background: rgba(255,193,7,0.1); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(255,193,7,0.3);">
+                <h2 style="font-size: 2rem; margin: 0;">📊</h2>
+                <p style="color: #ffc107; font-weight: 600; margin: 10px 0 0 0;">Career<br>Report</p>
+            </div>
+            """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);">
+            <h3 style="color: #00d4aa; margin-top: 0;">Quick Stats</h3>
+            <p style="color: #8892b0;">🚀 Get started in seconds</p>
+            <p style="color: #8892b0;">🎯 Target any tech role</p>
+            <p style="color: #8892b0;">📈 Track your progress</p>
+            <p style="color: #8892b0;">🤖 AI-powered feedback</p>
+            <br>
+            <p style="color: #00d4aa; font-size: 0.9rem; font-weight: 600;">
+                Select a feature from the sidebar to begin →
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
 
 # ========== RESUME ANALYZER ==========
 elif page == "📄 Resume Analyzer":
-    st.header("📄 Resume Analyzer")
-    st.write("Upload your resume (PDF or DOCX) to get an ATS score and improvement suggestions.")
+    st.markdown("<h1>📄 Resume Analyzer</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #8892b0;'>Upload your resume and get instant ATS feedback</p>", unsafe_allow_html=True)
     
-    uploaded_file = st.file_uploader("Choose a resume file", type=["pdf", "docx"])
+    uploaded_file = st.file_uploader("", type=["pdf", "docx"], label_visibility="collapsed")
     
     if uploaded_file is not None:
-        col1, col2 = st.columns(2)
+        col1, col2 = st.columns([1, 2])
         
         with col1:
-            st.subheader("File Details")
-            st.write(f"**Filename:** {uploaded_file.name}")
+            st.markdown("""
+            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px;">
+                <h4 style="color: #00d4aa; margin-top: 0;">File Details</h4>
+            """, unsafe_allow_html=True)
+            st.write(f"**📄 {uploaded_file.name}**")
             st.write(f"**Size:** {uploaded_file.size / 1024:.1f} KB")
-        
-        with col2:
-            if st.button("Analyze Resume", type="primary"):
-                with st.spinner("Analyzing your resume..."):
+            st.markdown("</div>", unsafe_allow_html=True)
+            
+            if st.button("🔍 Analyze Resume", type="primary", use_container_width=True):
+                with st.spinner("🤖 Analyzing your resume..."):
                     try:
                         files = {"file": (uploaded_file.name, uploaded_file.getvalue(), uploaded_file.type)}
                         response = requests.post(f"{API_URL}/resume/upload", files=files, timeout=30)
                         
                         if response.status_code == 200:
                             data = response.json()
-                            st.success("✅ Resume analyzed successfully!")
-                            
-                            # Display score
-                            score = data["score"]["overall_score"]
-                            st.metric("ATS Score", f"{score}/100")
-                            
-                            # Progress bar
-                            st.progress(score / 100)
-                            
-                            # Strengths
-                            if data["score"]["strengths"]:
-                                st.subheader("💪 Strengths")
-                                for s in data["score"]["strengths"]:
-                                    st.write(f"- {s}")
-                            
-                            # Weaknesses
-                            if data["score"]["weaknesses"]:
-                                st.subheader("⚠️ Areas to Improve")
-                                for w in data["score"]["weaknesses"]:
-                                    st.write(f"- {w}")
-                            
-                            # Suggestions
-                            if data["score"]["suggestions"]:
-                                st.subheader("💡 Suggestions")
-                                for s in data["score"]["suggestions"]:
-                                    st.write(f"- {s}")
-                            
-                            # Parsed info
-                            with st.expander("View Parsed Resume Data"):
-                                parsed = data["parsed_data"]
-                                st.json({
-                                    "Name": parsed.get("name"),
-                                    "Email": parsed.get("email"),
-                                    "Phone": parsed.get("phone"),
-                                    "Skills": parsed.get("skills", [])
-                                })
+                            st.session_state["last_resume"] = data
+                            st.success("✅ Analysis Complete!")
                         else:
-                            st.error(f"❌ Error: {response.json().get('detail', 'Unknown error')}")
-                            
-                    except requests.exceptions.ConnectionError:
-                        st.error("❌ Cannot connect to backend API. Make sure the server is running.")
+                            st.error(f"❌ {response.json().get('detail', 'Error')}")
                     except Exception as e:
-                        st.error(f"❌ Error: {str(e)}")
+                        st.error(f"❌ {str(e)}")
+        
+        with col2:
+            if "last_resume" in st.session_state:
+                data = st.session_state["last_resume"]
+                score = data["score"]["overall_score"]
+                
+                # Score ring
+                st.markdown(f"""
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 3rem; font-weight: 700; color: {'#00d4aa' if score >= 70 else '#ffc107' if score >= 50 else '#e94560'};">
+                        {score}%
+                    </div>
+                    <div style="color: #8892b0; font-size: 0.9rem;">ATS Compatibility Score</div>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                st.progress(score / 100)
+                
+                # Score breakdown
+                tabs = st.tabs(["💪 Strengths", "⚠️ Weaknesses", "💡 Suggestions", "📋 Parsed Data"])
+                
+                with tabs[0]:
+                    for s in data["score"]["strengths"]:
+                        st.markdown(f"""
+                        <div style="background: rgba(0,212,170,0.1); padding: 12px; border-radius: 8px; margin: 8px 0; border-left: 3px solid #00d4aa;">
+                            {s}
+                        </div>
+                        """, unsafe_allow_html=True)
+                
+                with tabs[1]:
+                    for w in data["score"]["weaknesses"]:
+                        st.markdown(f"""
+                        <div style="background: rgba(233,69,96,0.1); padding: 12px; border-radius: 8px; margin: 8px 0; border-left: 3px solid #e94560;">
+                            {w}
+                        </div>
+                        """, unsafe_allow_html=True)
+                
+                with tabs[2]:
+                    for s in data["score"]["suggestions"]:
+                        st.markdown(f"""
+                        <div style="background: rgba(0,168,232,0.1); padding: 12px; border-radius: 8px; margin: 8px 0; border-left: 3px solid #00a8e8;">
+                            {s}
+                        </div>
+                        """, unsafe_allow_html=True)
+                
+                with tabs[3]:
+                    parsed = data["parsed_data"]
+                    st.json({
+                        "Name": parsed.get("name"),
+                        "Email": parsed.get("email"),
+                        "Phone": parsed.get("phone"),
+                        "Skills": parsed.get("skills", [])
+                    })
 
 # ========== INTERVIEW PRACTICE ==========
 elif page == "🎤 Interview Practice":
-    st.header("🎤 Interview Practice")
-    st.write("Practice interviews with AI-generated questions and get instant feedback.")
+    st.markdown("<h1>🎤 Interview Practice</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #8892b0;'>Practice with AI-generated questions and get instant feedback</p>", unsafe_allow_html=True)
     
-    # Session setup
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        category = st.selectbox(
-            "Interview Type",
-            ["behavioral", "technical", "situational"]
-        )
-    
-    with col2:
-        question_count = st.slider("Number of Questions", 1, 5, 3)
-    
-    user_id = st.text_input("Your User ID (any unique string)", value="user-123")
-    
-    # Start interview
-    if st.button("Start Interview", type="primary"):
-        with st.spinner("Generating questions..."):
-            try:
-                response = requests.post(
-                    f"{API_URL}/interview/start",
-                    json={
-                        "user_id": user_id,
-                        "category": category,
-                        "question_count": question_count
-                    },
-                    timeout=10
-                )
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    st.session_state["interview_session"] = data
-                    st.session_state["current_question"] = 0
-                    st.success("✅ Interview started!")
-                else:
-                    st.error(f"❌ Error: {response.json().get('detail', 'Unknown error')}")
+    if "interview_session" not in st.session_state:
+        # Setup form
+        st.markdown("""
+        <div style="background: rgba(255,255,255,0.05); padding: 30px; border-radius: 15px;">
+        """, unsafe_allow_html=True)
+        
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            category = st.selectbox("Interview Type", ["behavioral", "technical", "situational"])
+        
+        with col2:
+            question_count = st.slider("Questions", 1, 5, 3)
+        
+        with col3:
+            user_id = st.text_input("User ID", value="user-123")
+        
+        st.markdown("</div>", unsafe_allow_html=True)
+        
+        if st.button("🚀 Start Interview", type="primary", use_container_width=True):
+            with st.spinner("Generating questions..."):
+                try:
+                    response = requests.post(
+                        f"{API_URL}/interview/start",
+                        json={"user_id": user_id, "category": category, "question_count": question_count},
+                        timeout=10
+                    )
                     
-            except requests.exceptions.ConnectionError:
-                st.error("❌ Cannot connect to backend API.")
-            except Exception as e:
-                st.error(f"❌ Error: {str(e)}")
+                    if response.status_code == 200:
+                        st.session_state["interview_session"] = response.json()
+                        st.session_state["current_q"] = 0
+                        st.rerun()
+                    else:
+                        st.error(f"❌ {response.json().get('detail', 'Error')}")
+                except Exception as e:
+                    st.error(f"❌ {str(e)}")
     
-    # Display questions and collect answers
-    if "interview_session" in st.session_state:
+    else:
         session = st.session_state["interview_session"]
         questions = session["questions"]
-        current = st.session_state.get("current_question", 0)
+        current = st.session_state.get("current_q", 0)
         
-        st.divider()
-        st.subheader(f"Question {current + 1} of {len(questions)}")
+        # Progress bar
+        progress = current / len(questions)
+        st.progress(progress)
+        st.markdown(f"<p style='text-align: center; color: #8892b0;'>Question {current + 1} of {len(questions)}</p>", unsafe_allow_html=True)
         
         if current < len(questions):
             q = questions[current]
-            st.info(f"**{q['question']}**")
-            st.caption(f"Category: {q['category']} | Difficulty: {q['difficulty']}")
             
-            answer = st.text_area("Your Answer", height=150, key=f"answer_{current}")
+            st.markdown(f"""
+            <div style="background: rgba(0,168,232,0.1); padding: 25px; border-radius: 15px; border: 1px solid rgba(0,168,232,0.3); margin: 20px 0;">
+                <p style="color: #00a8e8; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px;">
+                    {q['category']} • {q['difficulty'].upper()}
+                </p>
+                <h3 style="color: white; margin: 0; font-size: 1.3rem;">{q['question']}</h3>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            answer = st.text_area("Your Answer", height=150, key=f"ans_{current}", placeholder="Type your answer here...")
             
             col1, col2 = st.columns([1, 4])
-            
             with col1:
-                if st.button("Submit Answer", type="primary"):
+                if st.button("Submit", type="primary", use_container_width=True):
                     if answer.strip():
-                        with st.spinner("Evaluating your answer..."):
+                        with st.spinner("Evaluating..."):
                             try:
                                 response = requests.post(
                                     f"{API_URL}/interview/{session['session_id']}/answer",
-                                    json={
-                                        "question_id": q["id"],
-                                        "user_answer": answer
-                                    },
+                                    json={"question_id": q["id"], "user_answer": answer},
                                     timeout=10
                                 )
                                 
                                 if response.status_code == 200:
-                                    feedback = response.json()
-                                    st.session_state[f"feedback_{current}"] = feedback
-                                    st.session_state["current_question"] = current + 1
+                                    fb = response.json()
+                                    st.session_state[f"fb_{current}"] = fb
+                                    st.session_state["current_q"] = current + 1
                                     st.rerun()
-                                else:
-                                    st.error(f"❌ Error: {response.json().get('detail', 'Unknown error')}")
-                                    
                             except Exception as e:
-                                st.error(f"❌ Error: {str(e)}")
+                                st.error(f"❌ {str(e)}")
                     else:
-                        st.warning("Please enter an answer before submitting.")
+                        st.warning("Please enter an answer")
         else:
-            st.success("🎉 Interview completed! View your feedback below.")
+            # Interview complete
+            st.balloons()
+            st.markdown("""
+            <div style="text-align: center; padding: 40px;">
+                <h1 style="color: #00d4aa; font-size: 3rem;">🎉</h1>
+                <h2 style="color: white;">Interview Complete!</h2>
+            </div>
+            """, unsafe_allow_html=True)
             
             # Show all feedbacks
             for i in range(len(questions)):
-                if f"feedback_{i}" in st.session_state:
-                    fb = st.session_state[f"feedback_{i}"]
-                    with st.expander(f"Question {i+1} Feedback (Score: {fb['feedback']['score']})"):
-                        st.write(f"**Score:** {fb['feedback']['score']}/100")
-                        st.write(f"**Strengths:** {fb['feedback']['strengths']}")
-                        st.write(f"**Improvements:** {fb['feedback']['improvements']}")
-                        st.write(f"**Model Answer:** {fb['feedback']['model_answer']}")
+                if f"fb_{i}" in st.session_state:
+                    fb = st.session_state[f"fb_{i}"]
+                    score = fb["feedback"]["score"]
+                    color = "#00d4aa" if score >= 70 else "#ffc107" if score >= 50 else "#e94560"
+                    
+                    with st.expander(f"Question {i+1} — Score: {score}/100"):
+                        st.markdown(f"""
+                        <div style="background: rgba({ '0,212,170' if score >= 70 else '255,193,7' if score >= 50 else '233,69,96'},0.1); 
+                                    padding: 15px; border-radius: 10px; 
+                                    border-left: 4px solid {color};">
+                            <p style="color: {color}; font-weight: 600; margin: 0 0 10px 0;">Score: {score}/100</p>
+                            <p><strong>💪 Strengths:</strong> {fb['feedback']['strengths']}</p>
+                            <p><strong>📈 Improvements:</strong> {fb['feedback']['improvements']}</p>
+                            <p><strong>✨ Model Answer:</strong> {fb['feedback']['model_answer']}</p>
+                        </div>
+                        """, unsafe_allow_html=True)
             
-            # Get full session feedback
-            if st.button("Get Full Session Summary"):
-                try:
-                    response = requests.get(
-                        f"{API_URL}/interview/{session['session_id']}/feedback",
-                        timeout=10
-                    )
-                    if response.status_code == 200:
-                        summary = response.json()
-                        st.subheader("Session Summary")
-                        st.metric("Overall Score", f"{summary.get('overall_score', 'N/A')}")
-                        st.metric("Questions Answered", f"{summary['answered_questions']}/{summary['total_questions']}")
-                except Exception as e:
-                    st.error(f"❌ Error: {str(e)}")
+            if st.button("🔄 Start New Interview", type="primary"):
+                del st.session_state["interview_session"]
+                st.rerun()
 
 # ========== CAREER REPORT ==========
 elif page == "📊 Career Report":
-    st.header("📊 Career Report")
-    st.write("Generate a comprehensive career report combining resume analysis, skill gaps, and interview performance.")
+    st.markdown("<h1>📊 Career Report</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #8892b0;'>Generate a comprehensive career readiness report</p>", unsafe_allow_html=True)
     
     with st.form("report_form"):
+        st.markdown("""
+        <div style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 15px;">
+        """, unsafe_allow_html=True)
+        
         col1, col2 = st.columns(2)
         
         with col1:
@@ -246,18 +418,20 @@ elif page == "📊 Career Report":
             )
         
         with col2:
-            resume_score = st.slider("Your Resume Score", 0, 100, 65)
-            current_skills = st.text_area("Your Current Skills (comma-separated)", "Python, Git, SQL")
+            resume_score = st.slider("Resume Score", 0, 100, 65)
+            current_skills = st.text_area("Current Skills (comma-separated)", "Python, Git, SQL, Docker")
         
         resume_strengths = st.text_area("Resume Strengths (one per line)", "Strong technical skills\nGood project experience")
         resume_weaknesses = st.text_area("Resume Weaknesses (one per line)", "Lack of metrics\nNo certifications")
         
-        interview_session_id = st.text_input("Interview Session ID (optional)", help="Leave empty if you haven't done an interview yet")
+        interview_session_id = st.text_input("Interview Session ID (optional)", help="Leave empty if no interview done")
         
-        submitted = st.form_submit_button("Generate Report", type="primary")
+        st.markdown("</div>", unsafe_allow_html=True)
+        
+        submitted = st.form_submit_button("📈 Generate Report", use_container_width=True)
     
     if submitted:
-        with st.spinner("Generating your career report..."):
+        with st.spinner("🤖 Generating your career report..."):
             try:
                 payload = {
                     "user_id": user_id,
@@ -271,62 +445,83 @@ elif page == "📊 Career Report":
                 if interview_session_id.strip():
                     payload["interview_session_id"] = interview_session_id.strip()
                 
-                response = requests.post(
-                    f"{API_URL}/report/generate",
-                    json=payload,
-                    timeout=15
-                )
+                response = requests.post(f"{API_URL}/report/generate", json=payload, timeout=15)
                 
                 if response.status_code == 200:
                     report = response.json()
                     
-                    st.success("✅ Report generated!")
+                    st.balloons()
                     
-                    # Display report
+                    # Header stats
                     col1, col2, col3 = st.columns(3)
                     
                     with col1:
-                        st.metric("Resume Score", report["resume_section"]["overall_score"])
-                    
+                        st.metric("📄 Resume", f"{report['resume_section']['overall_score']}/100")
                     with col2:
-                        st.metric("Skill Coverage", f"{report['skill_gap_section']['coverage_percent']}%")
-                    
+                        st.metric("🔍 Skill Coverage", f"{report['skill_gap_section']['coverage_percent']}%")
                     with col3:
                         if report["interview_section"]:
-                            st.metric("Interview Score", report["interview_section"]["average_score"])
+                            st.metric("🎤 Interview", f"{report['interview_section']['average_score']}/100")
                         else:
-                            st.metric("Interview Score", "N/A")
+                            st.metric("🎤 Interview", "N/A")
+                    
+                    st.divider()
                     
                     # Recommendation
-                    st.subheader("🎯 Overall Recommendation")
-                    st.info(report["overall_recommendation"])
+                    st.markdown(f"""
+                    <div style="background: rgba(0,212,170,0.1); padding: 25px; border-radius: 15px; border: 1px solid rgba(0,212,170,0.3); margin: 20px 0;">
+                        <h3 style="color: #00d4aa; margin-top: 0;">🎯 Overall Recommendation</h3>
+                        <p style="color: white; font-size: 1.1rem; line-height: 1.6;">{report['overall_recommendation']}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
                     
-                    # Skill gaps
-                    st.subheader("📚 Skill Gaps")
-                    if report["skill_gap_section"]["missing_skills"]:
-                        for skill in report["skill_gap_section"]["missing_skills"]:
-                            st.write(f"- ❌ {skill}")
-                    else:
-                        st.write("✅ No major skill gaps!")
+                    # Tabs for details
+                    tabs = st.tabs(["❌ Missing Skills", "🎓 Learning Path", "🚀 Next Steps"])
                     
-                    # Learning path
-                    if report["skill_gap_section"]["learning_path"]:
-                        st.subheader("🎓 Learning Recommendations")
+                    with tabs[0]:
+                        if report["skill_gap_section"]["missing_skills"]:
+                            for skill in report["skill_gap_section"]["missing_skills"]:
+                                st.markdown(f"""
+                                <div style="background: rgba(233,69,96,0.1); padding: 12px 20px; border-radius: 8px; margin: 8px 0; 
+                                            border-left: 3px solid #e94560; display: flex; align-items: center;">
+                                    <span style="font-size: 1.2rem; margin-right: 10px;">❌</span>
+                                    <span style="color: white; font-weight: 500;">{skill}</span>
+                                </div>
+                                """, unsafe_allow_html=True)
+                        else:
+                            st.success("🎉 No major skill gaps!")
+                    
+                    with tabs[1]:
                         for item in report["skill_gap_section"]["learning_path"]:
-                            st.write(f"**{item['skill']}** — {item['resource']} (Priority: {item['priority']})")
+                            priority_color = "#e94560" if item["priority"] == "high" else "#ffc107"
+                            st.markdown(f"""
+                            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin: 10px 0;
+                                        border-left: 3px solid {priority_color};">
+                                <p style="color: white; font-weight: 600; margin: 0;">{item['skill']}</p>
+                                <p style="color: #8892b0; margin: 5px 0 0 0; font-size: 0.9rem;">{item['resource']}</p>
+                                <span style="background: {priority_color}; color: white; padding: 2px 10px; border-radius: 10px; 
+                                            font-size: 0.7rem; text-transform: uppercase;">{item['priority']} priority</span>
+                            </div>
+                            """, unsafe_allow_html=True)
                     
-                    # Next steps
-                    st.subheader("🚀 Next Steps")
-                    for i, step in enumerate(report["next_steps"], 1):
-                        st.write(f"{i}. {step}")
+                    with tabs[2]:
+                        for i, step in enumerate(report["next_steps"], 1):
+                            st.markdown(f"""
+                            <div style="background: rgba(0,168,232,0.1); padding: 15px; border-radius: 10px; margin: 10px 0;
+                                        border-left: 3px solid #00a8e8; display: flex; align-items: flex-start;">
+                                <span style="background: #00a8e8; color: white; width: 28px; height: 28px; border-radius: 50%; 
+                                            display: flex; align-items: center; justify-content: center; margin-right: 15px; 
+                                            font-weight: 700; flex-shrink: 0;">{i}</span>
+                                <span style="color: white; line-height: 1.5;">{step}</span>
+                            </div>
+                            """, unsafe_allow_html=True)
                     
-                    # Save report ID
-                    st.caption(f"Report ID: `{report['report_id']}` — You can retrieve this report later.")
+                    # Report ID
+                    st.divider()
+                    st.caption(f"Report ID: `{report['report_id']}`")
                     
                 else:
-                    st.error(f"❌ Error: {response.json().get('detail', 'Unknown error')}")
+                    st.error(f"❌ {response.json().get('detail', 'Error')}")
                     
-            except requests.exceptions.ConnectionError:
-                st.error("❌ Cannot connect to backend API. Make sure the server is running.")
             except Exception as e:
-                st.error(f"❌ Error: {str(e)}")
+                st.error(f"❌ {str(e)}")

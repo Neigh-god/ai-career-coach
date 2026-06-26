@@ -2,6 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers import resume, interview, report
+from app.models.database_models import init_db
+
+# Initialize database tables on startup
+init_db()
 
 app = FastAPI(
     title="AI Career Coach API",
@@ -12,7 +16,7 @@ app = FastAPI(
 # CORS middleware - allows frontend (Streamlit) to call the API
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, restrict to your frontend URL
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
