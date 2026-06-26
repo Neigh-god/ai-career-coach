@@ -1,6 +1,5 @@
 import streamlit as st
 import requests
-from datetime import datetime
 
 # ========== PAGE CONFIG ==========
 st.set_page_config(
@@ -10,36 +9,18 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# ========== API CONFIG ==========
+API_URL = "https://ai-career-coach-5njl.onrender.com"
+
 # ========== CUSTOM CSS ==========
 st.markdown("""
 <style>
-    /* Main theme */
     .main {
         background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     }
-    
-    /* Headers */
-    h1 {
-        color: #00d4aa !important;
-        font-weight: 700 !important;
-    }
-    h2 {
-        color: #e94560 !important;
-        font-weight: 600 !important;
-    }
-    h3 {
-        color: #0f3460 !important;
-    }
-    
-    /* Cards */
-    .stCard {
-        background: rgba(255,255,255,0.05);
-        border-radius: 15px;
-        padding: 20px;
-        border: 1px solid rgba(255,255,255,0.1);
-    }
-    
-    /* Buttons */
+    h1 { color: #00d4aa !important; font-weight: 700 !important; }
+    h2 { color: #e94560 !important; font-weight: 600 !important; }
+    h3 { color: #0f3460 !important; }
     .stButton>button {
         background: linear-gradient(90deg, #00d4aa, #00a8e8);
         color: white;
@@ -47,53 +28,17 @@ st.markdown("""
         border-radius: 25px;
         padding: 12px 30px;
         font-weight: 600;
-        transition: all 0.3s;
     }
-    .stButton>button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 20px rgba(0,212,170,0.4);
-    }
-    
-    /* Progress bars */
     .stProgress>div>div {
         background: linear-gradient(90deg, #00d4aa, #00a8e8);
     }
-    
-    /* Sidebar */
-    .css-1d391kg {
-        background: #0f0f23;
-    }
-    
-    /* Success/Error messages */
-    .stSuccess {
-        background: rgba(0,212,170,0.1);
-        border-left: 4px solid #00d4aa;
-    }
-    .stError {
-        background: rgba(233,69,96,0.1);
-        border-left: 4px solid #e94560;
-    }
-    
-    /* Metric cards */
     [data-testid="stMetricValue"] {
         color: #00d4aa !important;
         font-size: 2rem !important;
         font-weight: 700 !important;
     }
-    [data-testid="stMetricLabel"] {
-        color: #8892b0 !important;
-    }
-    
-    /* Info boxes */
-    .stInfo {
-        background: rgba(0,168,232,0.1);
-        border-left: 4px solid #00a8e8;
-    }
 </style>
 """, unsafe_allow_html=True)
-
-# ========== API CONFIG ==========
-API_URL = "https://ai-career-coach-5njl.onrender.com"
 
 # ========== SIDEBAR ==========
 with st.sidebar:
@@ -108,13 +53,12 @@ with st.sidebar:
     
     page = st.radio(
         "Navigate",
-        ["🏠 Home", "📄 Resume Analyzer", "🎤 Interview Practice", "📊 Career Report"],
+        ["🏠 Home", "📄 Resume Analyzer", "🎤 Interview Practice", "📊 Career Report", "ℹ️ About"],
         label_visibility="collapsed"
     )
     
     st.divider()
     
-    # Health check
     try:
         response = requests.get(f"{API_URL}/health", timeout=3)
         if response.status_code == 200:
@@ -141,7 +85,6 @@ if page == "🏠 Home":
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # Feature cards
         feat_col1, feat_col2, feat_col3, feat_col4 = st.columns(4)
         
         with feat_col1:
@@ -230,7 +173,6 @@ elif page == "📄 Resume Analyzer":
                 data = st.session_state["last_resume"]
                 score = data["score"]["overall_score"]
                 
-                # Score ring
                 st.markdown(f"""
                 <div style="text-align: center; padding: 20px;">
                     <div style="font-size: 3rem; font-weight: 700; color: {'#00d4aa' if score >= 70 else '#ffc107' if score >= 50 else '#e94560'};">
@@ -242,7 +184,6 @@ elif page == "📄 Resume Analyzer":
                 
                 st.progress(score / 100)
                 
-                # Score breakdown
                 tabs = st.tabs(["💪 Strengths", "⚠️ Weaknesses", "💡 Suggestions", "📋 Parsed Data"])
                 
                 with tabs[0]:
@@ -284,7 +225,6 @@ elif page == "🎤 Interview Practice":
     st.markdown("<p style='color: #8892b0;'>Practice with AI-generated questions and get instant feedback</p>", unsafe_allow_html=True)
     
     if "interview_session" not in st.session_state:
-        # Setup form
         st.markdown("""
         <div style="background: rgba(255,255,255,0.05); padding: 30px; border-radius: 15px;">
         """, unsafe_allow_html=True)
@@ -325,7 +265,6 @@ elif page == "🎤 Interview Practice":
         questions = session["questions"]
         current = st.session_state.get("current_q", 0)
         
-        # Progress bar
         progress = current / len(questions)
         st.progress(progress)
         st.markdown(f"<p style='text-align: center; color: #8892b0;'>Question {current + 1} of {len(questions)}</p>", unsafe_allow_html=True)
@@ -366,7 +305,6 @@ elif page == "🎤 Interview Practice":
                     else:
                         st.warning("Please enter an answer")
         else:
-            # Interview complete
             st.balloons()
             st.markdown("""
             <div style="text-align: center; padding: 40px;">
@@ -375,7 +313,6 @@ elif page == "🎤 Interview Practice":
             </div>
             """, unsafe_allow_html=True)
             
-            # Show all feedbacks
             for i in range(len(questions)):
                 if f"fb_{i}" in st.session_state:
                     fb = st.session_state[f"fb_{i}"]
@@ -452,7 +389,6 @@ elif page == "📊 Career Report":
                     
                     st.balloons()
                     
-                    # Header stats
                     col1, col2, col3 = st.columns(3)
                     
                     with col1:
@@ -467,7 +403,6 @@ elif page == "📊 Career Report":
                     
                     st.divider()
                     
-                    # Recommendation
                     st.markdown(f"""
                     <div style="background: rgba(0,212,170,0.1); padding: 25px; border-radius: 15px; border: 1px solid rgba(0,212,170,0.3); margin: 20px 0;">
                         <h3 style="color: #00d4aa; margin-top: 0;">🎯 Overall Recommendation</h3>
@@ -475,7 +410,6 @@ elif page == "📊 Career Report":
                     </div>
                     """, unsafe_allow_html=True)
                     
-                    # Tabs for details
                     tabs = st.tabs(["❌ Missing Skills", "🎓 Learning Path", "🚀 Next Steps"])
                     
                     with tabs[0]:
@@ -516,7 +450,6 @@ elif page == "📊 Career Report":
                             </div>
                             """, unsafe_allow_html=True)
                     
-                    # Report ID
                     st.divider()
                     st.caption(f"Report ID: `{report['report_id']}`")
                     
@@ -525,3 +458,153 @@ elif page == "📊 Career Report":
                     
             except Exception as e:
                 st.error(f"❌ {str(e)}")
+
+# ========== ABOUT PAGE ==========
+elif page == "ℹ️ About":
+    # App Header
+    st.markdown("""
+    <div style="text-align: center; padding: 20px 0;">
+        <h1 style="color: #00d4aa; font-size: 2.5rem;">🎯 AI Career Coach</h1>
+        <p style="color: #8892b0; font-size: 1.1rem;">Your AI-powered career development partner</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.divider()
+    
+    # What We Do + Tech Stack
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        ### What We Do
+        
+        AI Career Coach helps job seekers and students:
+        
+        - 📄 **Analyze resumes** for ATS compatibility
+        - 🔍 **Identify skill gaps** against target roles
+        - 🎤 **Practice interviews** with AI-generated questions
+        - 📊 **Generate reports** with actionable next steps
+        
+        Built with modern AI and data science techniques.
+        """)
+    
+    with col2:
+        st.markdown("""
+        ### Tech Stack
+        
+        | Layer | Technology |
+        |-------|-----------|
+        | Backend | FastAPI |
+        | Frontend | Streamlit |
+        | Database | SQLAlchemy |
+        | AI Engine | Custom NLP |
+        | Cloud | Render + Streamlit Cloud |
+        
+        Open source on GitHub.
+        """)
+    
+    st.divider()
+    
+    # How It Works
+    st.markdown("""
+    ### How It Works
+    
+    1. **Upload your resume** — Get instant ATS score and feedback
+    2. **Set your target role** — See skill gaps and learning path
+    3. **Practice interviews** — Answer questions and get AI feedback
+    4. **Generate report** — Combined readiness score + next steps
+    
+    All data is processed securely and stored only for your session.
+    """)
+    
+    st.divider()
+    
+    # Developer Section
+    st.markdown("""
+    <div style="text-align: center; padding: 10px 0;">
+        <h2 style="color: #00d4aa;">👨‍💻 About the Developer</h2>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    dev_col1, dev_col2 = st.columns([1, 2])
+    
+    with dev_col1:
+        # Replace with your actual photo URL or local path
+        st.image("frontend/assets/me.png", 
+         caption="Upam - Developer", 
+         use_container_width=True)
+        
+        # Social links
+        st.markdown("""
+        <div style="text-align: center;">
+            <a href="https://github.com/Neigh-god" style="color: #00d4aa; margin: 0 10px;">GitHub</a>
+            <a href="https://linkedin.com/in/your-profile" style="color: #00a8e8; margin: 0 10px;">LinkedIn</a>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with dev_col2:
+        st.markdown("""
+        ### Hi, I'm Upam! 👋
+        
+        I'm a passionate developer building AI-powered tools to help people advance their careers. 
+        This project combines my interests in:
+        
+        - 🤖 **Artificial Intelligence** — Natural language processing for resume analysis
+        - 🌐 **Full-Stack Development** — FastAPI backend with Streamlit frontend
+        - 📊 **Data Science** — Skill gap analysis and scoring algorithms
+        
+        ### Why I Built This
+        
+        I noticed many job seekers struggle with:
+        - Not knowing if their resume passes ATS filters
+        - Feeling unprepared for technical interviews
+        - Not understanding what skills they're missing
+        
+        AI Career Coach solves all three problems in one platform.
+        
+        ### Connect With Me
+        
+        - 💼 Open to collaboration and opportunities
+        - 🚀 Always building something new
+        - 📧 Reach out: [your-email@example.com]
+        """)
+    
+    st.divider()
+    
+    # Screenshot Gallery
+    st.markdown("""
+    <div style="text-align: center; padding: 10px 0;">
+        <h2 style="color: #00d4aa;">📸 App Screenshots</h2>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Replace these with your actual screenshots
+    ss_col1, ss_col2, ss_col3 = st.columns(3)
+    
+    with ss_col1:
+        st.image("https://via.placeholder.com/400x300.png?text=Resume+Analyzer", 
+                 caption="Resume Analysis Dashboard", 
+                 use_container_width=True)
+    
+    with ss_col2:
+        st.image("https://via.placeholder.com/400x300.png?text=Interview+Practice", 
+                 caption="Interview Practice Mode", 
+                 use_container_width=True)
+    
+    with ss_col3:
+        st.image("https://via.placeholder.com/400x300.png?text=Career+Report", 
+                 caption="Career Report Generation", 
+                 use_container_width=True)
+    
+    st.divider()
+    
+    # Footer
+    st.markdown("""
+    <div style="text-align: center; padding: 20px;">
+        <p style="color: #8892b0;">
+            Built with ❤️ by Upam<br>
+            <a href="https://github.com/Neigh-god/ai-career-coach" style="color: #00d4aa;">⭐ Star on GitHub</a> • 
+            <a href="https://github.com/Neigh-god/ai-career-coach/issues" style="color: #e94560;">🐛 Report Issue</a>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
