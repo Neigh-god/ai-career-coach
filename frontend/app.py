@@ -44,7 +44,12 @@ st.markdown("""
 with st.sidebar:
     st.markdown("""
     <div style="text-align: center; padding: 20px 0;">
-        <h1 style="color: #00d4aa; font-size: 1.5rem;">🎯 AI Career Coach</h1>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00d4aa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;">
+            <circle cx="12" cy="12" r="10"></circle>
+            <circle cx="12" cy="12" r="6"></circle>
+            <circle cx="12" cy="12" r="2"></circle>
+        </svg>
+        <h1 style="color: #00d4aa; font-size: 1.5rem; margin: 0;">AI Career Coach</h1>
         <p style="color: #8892b0; font-size: 0.8rem;">Your AI Career Partner</p>
     </div>
     """, unsafe_allow_html=True)
@@ -53,7 +58,7 @@ with st.sidebar:
     
     page = st.radio(
         "Navigate",
-        ["🏠 Home", "📄 Resume Analyzer", "🎤 Interview Practice", "📊 Career Report", "ℹ️ About"],
+        ["Home", "Resume Analyzer", "Interview Practice", "Career Report", "About"],
         label_visibility="collapsed"
     )
     
@@ -62,14 +67,14 @@ with st.sidebar:
     try:
         response = requests.get(f"{API_URL}/health", timeout=3)
         if response.status_code == 200:
-            st.success("🟢 API Connected")
+            st.success("API Connected")
         else:
-            st.warning("🟡 API Issue")
+            st.warning("API Issue")
     except:
-        st.error("🔴 API Offline")
+        st.error("API Offline")
 
 # ========== HOME PAGE ==========
-if page == "🏠 Home":
+if page == "Home":
     col1, col2 = st.columns([2, 1])
     
     with col1:
@@ -141,10 +146,32 @@ if page == "🏠 Home":
         st.markdown("""
         <div style="background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);">
             <h3 style="color: #00d4aa; margin-top: 0;">Quick Stats</h3>
-            <p style="color: #8892b0;">🚀 Get started in seconds</p>
-            <p style="color: #8892b0;">🎯 Target any tech role</p>
-            <p style="color: #8892b0;">📈 Track your progress</p>
-            <p style="color: #8892b0;">🤖 AI-powered feedback</p>
+            <p style="color: #8892b0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00d4aa" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                </svg>
+                Get started in seconds
+            </p>
+            <p style="color: #8892b0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e94560" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                Target any tech role
+            </p>
+            <p style="color: #8892b0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00a8e8" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                Track your progress
+            </p>
+            <p style="color: #8892b0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffc107" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
+                    <path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10S2 17.523 2 12 2 2 12 2z"></path>
+                    <path d="M12 6v6l4 2"></path>
+                </svg>
+                AI-powered feedback
+            </p>
             <br>
             <p style="color: #00d4aa; font-size: 0.9rem; font-weight: 600;">
                 Select a feature from the sidebar to begin →
@@ -153,8 +180,8 @@ if page == "🏠 Home":
         """, unsafe_allow_html=True)
 
 # ========== RESUME ANALYZER ==========
-elif page == "📄 Resume Analyzer":
-    st.markdown("<h1>📄 Resume Analyzer</h1>", unsafe_allow_html=True)
+elif page == "Resume Analyzer":
+    st.markdown("<h1>Resume Analyzer</h1>", unsafe_allow_html=True)
     st.markdown("<p style='color: #8892b0;'>Upload your resume and get instant ATS feedback</p>", unsafe_allow_html=True)
     
     uploaded_file = st.file_uploader("", type=["pdf", "docx"], label_visibility="collapsed")
@@ -167,12 +194,12 @@ elif page == "📄 Resume Analyzer":
             <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px;">
                 <h4 style="color: #00d4aa; margin-top: 0;">File Details</h4>
             """, unsafe_allow_html=True)
-            st.write(f"**📄 {uploaded_file.name}**")
+            st.write(f"**{uploaded_file.name}**")
             st.write(f"**Size:** {uploaded_file.size / 1024:.1f} KB")
             st.markdown("</div>", unsafe_allow_html=True)
             
-            if st.button("🔍 Analyze Resume", type="primary", use_container_width=True):
-                with st.spinner("🤖 Analyzing your resume..."):
+            if st.button("Analyze Resume", type="primary", use_container_width=True):
+                with st.spinner("Analyzing your resume..."):
                     try:
                         files = {"file": (uploaded_file.name, uploaded_file.getvalue(), uploaded_file.type)}
                         response = requests.post(f"{API_URL}/resume/upload", files=files, timeout=30)
@@ -180,11 +207,11 @@ elif page == "📄 Resume Analyzer":
                         if response.status_code == 200:
                             data = response.json()
                             st.session_state["last_resume"] = data
-                            st.success("✅ Analysis Complete!")
+                            st.success("Analysis Complete!")
                         else:
-                            st.error(f"❌ {response.json().get('detail', 'Error')}")
+                            st.error(f"{response.json().get('detail', 'Error')}")
                     except Exception as e:
-                        st.error(f"❌ {str(e)}")
+                        st.error(f"{str(e)}")
         
         with col2:
             if "last_resume" in st.session_state:
@@ -202,7 +229,7 @@ elif page == "📄 Resume Analyzer":
                 
                 st.progress(score / 100)
                 
-                tabs = st.tabs(["💪 Strengths", "⚠️ Weaknesses", "💡 Suggestions", "📋 Parsed Data"])
+                tabs = st.tabs(["Strengths", "Weaknesses", "Suggestions", "Parsed Data"])
                 
                 with tabs[0]:
                     for s in data["score"]["strengths"]:
@@ -238,8 +265,8 @@ elif page == "📄 Resume Analyzer":
                     })
 
 # ========== INTERVIEW PRACTICE ==========
-elif page == "🎤 Interview Practice":
-    st.markdown("<h1>🎤 Interview Practice</h1>", unsafe_allow_html=True)
+elif page == "Interview Practice":
+    st.markdown("<h1>Interview Practice</h1>", unsafe_allow_html=True)
     st.markdown("<p style='color: #8892b0;'>Practice with AI-generated questions and get instant feedback</p>", unsafe_allow_html=True)
     
     if "interview_session" not in st.session_state:
@@ -260,7 +287,7 @@ elif page == "🎤 Interview Practice":
         
         st.markdown("</div>", unsafe_allow_html=True)
         
-        if st.button("🚀 Start Interview", type="primary", use_container_width=True):
+        if st.button("Start Interview", type="primary", use_container_width=True):
             with st.spinner("Generating questions..."):
                 try:
                     response = requests.post(
@@ -274,9 +301,9 @@ elif page == "🎤 Interview Practice":
                         st.session_state["current_q"] = 0
                         st.rerun()
                     else:
-                        st.error(f"❌ {response.json().get('detail', 'Error')}")
+                        st.error(f"{response.json().get('detail', 'Error')}")
                 except Exception as e:
-                    st.error(f"❌ {str(e)}")
+                    st.error(f"{str(e)}")
     
     else:
         session = st.session_state["interview_session"]
@@ -319,15 +346,14 @@ elif page == "🎤 Interview Practice":
                                     st.session_state["current_q"] = current + 1
                                     st.rerun()
                             except Exception as e:
-                                st.error(f"❌ {str(e)}")
+                                st.error(f"{str(e)}")
                     else:
                         st.warning("Please enter an answer")
         else:
             st.balloons()
             st.markdown("""
             <div style="text-align: center; padding: 40px;">
-                <h1 style="color: #00d4aa; font-size: 3rem;">🎉</h1>
-                <h2 style="color: white;">Interview Complete!</h2>
+                <h1 style="color: #00d4aa; font-size: 3rem;">Interview Complete!</h1>
             </div>
             """, unsafe_allow_html=True)
             
@@ -343,19 +369,19 @@ elif page == "🎤 Interview Practice":
                                     padding: 15px; border-radius: 10px; 
                                     border-left: 4px solid {color};">
                             <p style="color: {color}; font-weight: 600; margin: 0 0 10px 0;">Score: {score}/100</p>
-                            <p><strong>💪 Strengths:</strong> {fb['feedback']['strengths']}</p>
-                            <p><strong>📈 Improvements:</strong> {fb['feedback']['improvements']}</p>
-                            <p><strong>✨ Model Answer:</strong> {fb['feedback']['model_answer']}</p>
+                            <p><strong>Strengths:</strong> {fb['feedback']['strengths']}</p>
+                            <p><strong>Improvements:</strong> {fb['feedback']['improvements']}</p>
+                            <p><strong>Model Answer:</strong> {fb['feedback']['model_answer']}</p>
                         </div>
                         """, unsafe_allow_html=True)
             
-            if st.button("🔄 Start New Interview", type="primary"):
+            if st.button("Start New Interview", type="primary"):
                 del st.session_state["interview_session"]
                 st.rerun()
 
 # ========== CAREER REPORT ==========
-elif page == "📊 Career Report":
-    st.markdown("<h1>📊 Career Report</h1>", unsafe_allow_html=True)
+elif page == "Career Report":
+    st.markdown("<h1>Career Report</h1>", unsafe_allow_html=True)
     st.markdown("<p style='color: #8892b0;'>Generate a comprehensive career readiness report</p>", unsafe_allow_html=True)
     
     with st.form("report_form"):
@@ -383,10 +409,10 @@ elif page == "📊 Career Report":
         
         st.markdown("</div>", unsafe_allow_html=True)
         
-        submitted = st.form_submit_button("📈 Generate Report", use_container_width=True)
+        submitted = st.form_submit_button("Generate Report", use_container_width=True)
     
     if submitted:
-        with st.spinner("🤖 Generating your career report..."):
+        with st.spinner("Generating your career report..."):
             try:
                 payload = {
                     "user_id": user_id,
@@ -410,25 +436,25 @@ elif page == "📊 Career Report":
                     col1, col2, col3 = st.columns(3)
                     
                     with col1:
-                        st.metric("📄 Resume", f"{report['resume_section']['overall_score']}/100")
+                        st.metric("Resume", f"{report['resume_section']['overall_score']}/100")
                     with col2:
-                        st.metric("🔍 Skill Coverage", f"{report['skill_gap_section']['coverage_percent']}%")
+                        st.metric("Skill Coverage", f"{report['skill_gap_section']['coverage_percent']}%")
                     with col3:
                         if report["interview_section"]:
-                            st.metric("🎤 Interview", f"{report['interview_section']['average_score']}/100")
+                            st.metric("Interview", f"{report['interview_section']['average_score']}/100")
                         else:
-                            st.metric("🎤 Interview", "N/A")
+                            st.metric("Interview", "N/A")
                     
                     st.divider()
                     
                     st.markdown(f"""
                     <div style="background: rgba(0,212,170,0.1); padding: 25px; border-radius: 15px; border: 1px solid rgba(0,212,170,0.3); margin: 20px 0;">
-                        <h3 style="color: #00d4aa; margin-top: 0;">🎯 Overall Recommendation</h3>
+                        <h3 style="color: #00d4aa; margin-top: 0;">Overall Recommendation</h3>
                         <p style="color: white; font-size: 1.1rem; line-height: 1.6;">{report['overall_recommendation']}</p>
                     </div>
                     """, unsafe_allow_html=True)
                     
-                    tabs = st.tabs(["❌ Missing Skills", "🎓 Learning Path", "🚀 Next Steps"])
+                    tabs = st.tabs(["Missing Skills", "Learning Path", "Next Steps"])
                     
                     with tabs[0]:
                         if report["skill_gap_section"]["missing_skills"]:
@@ -436,12 +462,12 @@ elif page == "📊 Career Report":
                                 st.markdown(f"""
                                 <div style="background: rgba(233,69,96,0.1); padding: 12px 20px; border-radius: 8px; margin: 8px 0; 
                                             border-left: 3px solid #e94560; display: flex; align-items: center;">
-                                    <span style="font-size: 1.2rem; margin-right: 10px;">❌</span>
+                                    <span style="font-size: 1.2rem; margin-right: 10px;">X</span>
                                     <span style="color: white; font-weight: 500;">{skill}</span>
                                 </div>
                                 """, unsafe_allow_html=True)
                         else:
-                            st.success("🎉 No major skill gaps!")
+                            st.success("No major skill gaps!")
                     
                     with tabs[1]:
                         for item in report["skill_gap_section"]["learning_path"]:
@@ -472,17 +498,17 @@ elif page == "📊 Career Report":
                     st.caption(f"Report ID: `{report['report_id']}`")
                     
                 else:
-                    st.error(f"❌ {response.json().get('detail', 'Error')}")
+                    st.error(f"{response.json().get('detail', 'Error')}")
                     
             except Exception as e:
-                st.error(f"❌ {str(e)}")
+                st.error(f"{str(e)}")
 
 # ========== ABOUT PAGE ==========
-elif page == "ℹ️ About":
+elif page == "About":
     # App Header
     st.markdown("""
     <div style="text-align: center; padding: 20px 0;">
-        <h1 style="color: #00d4aa; font-size: 2.5rem;">🎯 AI Career Coach</h1>
+        <h1 style="color: #00d4aa; font-size: 2.5rem;">AI Career Coach</h1>
         <p style="color: #8892b0; font-size: 1.1rem;">Your AI-powered career development partner</p>
     </div>
     """, unsafe_allow_html=True)
@@ -498,10 +524,10 @@ elif page == "ℹ️ About":
         
         AI Career Coach helps job seekers and students:
         
-        - 📄 **Analyze resumes** for ATS compatibility
-        - 🔍 **Identify skill gaps** against target roles
-        - 🎤 **Practice interviews** with AI-generated questions
-        - 📊 **Generate reports** with actionable next steps
+        - **Analyze resumes** for ATS compatibility
+        - **Identify skill gaps** against target roles
+        - **Practice interviews** with AI-generated questions
+        - **Generate reports** with actionable next steps
         
         Built with modern AI and data science techniques.
         """)
@@ -540,7 +566,7 @@ elif page == "ℹ️ About":
     # Developer Section
     st.markdown("""
     <div style="text-align: center; padding: 10px 0;">
-        <h2 style="color: #00d4aa;">👨‍💻 About the Developer</h2>
+        <h2 style="color: #00d4aa;">About the Developer</h2>
     </div>
     """, unsafe_allow_html=True)
     
@@ -562,14 +588,14 @@ elif page == "ℹ️ About":
     
     with dev_col2:
         st.markdown("""
-        ### Hi, I'm Upam! 👋
+        ### Hi, I'm Upam!
         
         I'm a passionate developer building AI-powered tools to help people advance their careers. 
         This project combines my interests in:
         
-        - 🤖 **Artificial Intelligence** — Natural language processing for resume analysis
-        - 🌐 **Full-Stack Development** — FastAPI backend with Streamlit frontend
-        - 📊 **Data Science** — Skill gap analysis and scoring algorithms
+        - **Artificial Intelligence** — Natural language processing for resume analysis
+        - **Full-Stack Development** — FastAPI backend with Streamlit frontend
+        - **Data Science** — Skill gap analysis and scoring algorithms
         
         ### Why I Built This
         
@@ -582,9 +608,9 @@ elif page == "ℹ️ About":
         
         ### Connect With Me
         
-        - 💼 Open to collaboration and opportunities
-        - 🚀 Always building something new
-        - 📧 Email: **majiupam@gmail.com**
+        - Open to collaboration and opportunities
+        - Always building something new
+        - Email: **majiupam@gmail.com**
         """)
     
     st.divider()
@@ -593,9 +619,9 @@ elif page == "ℹ️ About":
     st.markdown("""
     <div style="text-align: center; padding: 20px;">
         <p style="color: #8892b0;">
-            Built with ❤️ by Upam<br>
-            <a href="https://github.com/Neigh-god/ai-career-coach" style="color: #00d4aa;">⭐ Star on GitHub</a> • 
-            <a href="https://github.com/Neigh-god/ai-career-coach/issues" style="color: #e94560;">🐛 Report Issue</a>
+            Built with care by Upam<br>
+            <a href="https://github.com/Neigh-god/ai-career-coach" style="color: #00d4aa;">Star on GitHub</a> • 
+            <a href="https://github.com/Neigh-god/ai-career-coach/issues" style="color: #e94560;">Report Issue</a>
         </p>
     </div>
     """, unsafe_allow_html=True)
