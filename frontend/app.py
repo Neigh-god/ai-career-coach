@@ -6,7 +6,7 @@ st.set_page_config(
     page_title="AI Career Coach",
     page_icon="🎯",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
 # ========== API CONFIG ==========
@@ -15,12 +15,203 @@ API_URL = "https://ai-career-coach-5njl.onrender.com"
 # ========== CUSTOM CSS ==========
 st.markdown("""
 <style>
-    .main {
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    
+    * {
+        font-family: 'Inter', sans-serif;
     }
+    
+    .main {
+        background: linear-gradient(135deg, #0a0a1a 0%, #12122a 50%, #0d1b2a 100%);
+    }
+    
+    /* Hero Section */
+    .hero-section {
+        background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #16213e 100%);
+        padding: 80px 40px;
+        border-radius: 24px;
+        text-align: center;
+        margin-bottom: 40px;
+        border: 1px solid rgba(0,212,170,0.15);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(0,212,170,0.1) 0%, transparent 70%);
+        animation: pulse 4s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.5; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+    }
+    
+    .hero-title {
+        font-size: 4rem;
+        font-weight: 800;
+        background: linear-gradient(90deg, #00d4aa, #00a8e8, #e94560, #00d4aa);
+        background-size: 300% 300%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradient-shift 5s ease infinite;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    @keyframes gradient-shift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    
+    .hero-subtitle {
+        font-size: 1.3rem;
+        color: #8892b0;
+        max-width: 600px;
+        margin: 0 auto 40px;
+        line-height: 1.6;
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Buttons */
+    .btn-primary {
+        background: linear-gradient(90deg, #00d4aa, #00a8e8);
+        color: white;
+        padding: 16px 32px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-block;
+        margin: 0 10px;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0,212,170,0.3);
+    }
+    
+    .btn-secondary {
+        background: transparent;
+        color: #00d4aa;
+        padding: 16px 32px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        border: 2px solid #00d4aa;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-block;
+        margin: 0 10px;
+    }
+    
+    .btn-secondary:hover {
+        background: rgba(0,212,170,0.1);
+        transform: translateY(-2px);
+    }
+    
+    /* Feature Cards */
+    .feature-card {
+        background: rgba(255,255,255,0.03);
+        padding: 30px;
+        border-radius: 20px;
+        text-align: center;
+        border: 1px solid rgba(255,255,255,0.05);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(255,255,255,0.1);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    
+    .feature-card:hover::before {
+        opacity: 1;
+    }
+    
+    .feature-icon {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 15px;
+    }
+    
+    .feature-title {
+        color: var(--accent-color);
+        font-weight: 600;
+        margin: 0;
+        font-size: 1.1rem;
+    }
+    
+    /* Stats Section */
+    .stats-section {
+        background: rgba(255,255,255,0.03);
+        padding: 40px;
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+    
+    .stat-item {
+        display: flex;
+        align-items: center;
+        margin: 15px 0;
+        color: #8892b0;
+    }
+    
+    .stat-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 12px;
+        color: var(--accent-color);
+    }
+    
+    /* Floating particles */
+    .particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: #00d4aa;
+        border-radius: 50%;
+        animation: float 6s ease-in-out infinite;
+        opacity: 0.3;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0) translateX(0); }
+        25% { transform: translateY(-20px) translateX(10px); }
+        50% { transform: translateY(-10px) translateX(-10px); }
+        75% { transform: translateY(-30px) translateX(5px); }
+    }
+    
     h1 { color: #00d4aa !important; font-weight: 700 !important; }
     h2 { color: #e94560 !important; font-weight: 600 !important; }
     h3 { color: #0f3460 !important; }
+    
     .stButton>button {
         background: linear-gradient(90deg, #00d4aa, #00a8e8);
         color: white;
@@ -29,158 +220,189 @@ st.markdown("""
         padding: 12px 30px;
         font-weight: 600;
     }
+    
     .stProgress>div>div {
         background: linear-gradient(90deg, #00d4aa, #00a8e8);
     }
+    
     [data-testid="stMetricValue"] {
         color: #00d4aa !important;
         font-size: 2rem !important;
         font-weight: 700 !important;
     }
+    
+    /* Hide default sidebar */
+    .css-1d391kg { display: none; }
+    .css-1544g2d { display: none; }
 </style>
 """, unsafe_allow_html=True)
 
-# ========== SIDEBAR ==========
-with st.sidebar:
-    st.markdown("""
-    <div style="text-align: center; padding: 20px 0;">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00d4aa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;">
+# ========== CUSTOM NAVIGATION ==========
+st.markdown("""
+<div style="
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    margin-bottom: 20px;
+">
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00d4aa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"></circle>
             <circle cx="12" cy="12" r="6"></circle>
             <circle cx="12" cy="12" r="2"></circle>
         </svg>
-        <h1 style="color: #00d4aa; font-size: 1.5rem; margin: 0;">AI Career Coach</h1>
-        <p style="color: #8892b0; font-size: 0.8rem;">Your AI Career Partner</p>
+        <span style="color: #00d4aa; font-size: 1.5rem; font-weight: 700;">AI Career Coach</span>
     </div>
-    """, unsafe_allow_html=True)
-    
-    st.divider()
-    
-    page = st.radio(
-        "Navigate",
-        ["Home", "Resume Analyzer", "Interview Practice", "Career Report", "About"],
-        label_visibility="collapsed"
-    )
-    
-    st.divider()
-    
-    try:
-        response = requests.get(f"{API_URL}/health", timeout=3)
-        if response.status_code == 200:
-            st.success("API Connected")
-        else:
-            st.warning("API Issue")
-    except:
-        st.error("API Offline")
+    <div style="display: flex; gap: 30px;">
+        <a href="?page=home" style="color: #8892b0; text-decoration: none; font-weight: 500; transition: color 0.3s;">Home</a>
+        <a href="?page=resume" style="color: #8892b0; text-decoration: none; font-weight: 500; transition: color 0.3s;">Resume</a>
+        <a href="?page=interview" style="color: #8892b0; text-decoration: none; font-weight: 500; transition: color 0.3s;">Interview</a>
+        <a href="?page=report" style="color: #8892b0; text-decoration: none; font-weight: 500; transition: color 0.3s;">Report</a>
+        <a href="?page=about" style="color: #8892b0; text-decoration: none; font-weight: 500; transition: color 0.3s;">About</a>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# ========== PAGE SELECTION ==========
+query_params = st.query_params
+page = query_params.get("page", "home")
 
 # ========== HOME PAGE ==========
-if page == "Home":
-    col1, col2 = st.columns([2, 1])
-    
-    with col1:
-        st.markdown("""
-        <h1 style="font-size: 3rem; margin-bottom: 0;">Welcome to</h1>
-        <h1 style="font-size: 3.5rem; color: #00d4aa; margin-top: 0;">AI Career Coach</h1>
-        <p style="font-size: 1.2rem; color: #8892b0; line-height: 1.6;">
+if page == "home":
+    # Hero Section
+    st.markdown("""
+    <div class="hero-section">
+        <div class="particle" style="top: 20%; left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="top: 60%; left: 80%; animation-delay: 1s;"></div>
+        <div class="particle" style="top: 40%; left: 50%; animation-delay: 2s;"></div>
+        <div class="particle" style="top: 80%; left: 20%; animation-delay: 3s;"></div>
+        <div class="particle" style="top: 30%; left: 70%; animation-delay: 4s;"></div>
+        
+        <h1 class="hero-title">AI Career Coach</h1>
+        <p class="hero-subtitle">
             Your personal AI-powered career development assistant. 
             Analyze resumes, practice interviews, identify skill gaps, 
             and generate actionable career reports.
         </p>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("<br>", unsafe_allow_html=True)
-        
-        feat_col1, feat_col2, feat_col3, feat_col4 = st.columns(4)
-        
-        with feat_col1:
-            st.markdown("""
-            <div style="background: rgba(0,212,170,0.1); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(0,212,170,0.3);">
-                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#00d4aa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                    <polyline points="10 9 9 9 8 9"></polyline>
-                </svg>
-                <p style="color: #00d4aa; font-weight: 600; margin: 0;">Resume<br>Analyzer</p>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        with feat_col2:
-            st.markdown("""
-            <div style="background: rgba(0,168,232,0.1); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(0,168,232,0.3);">
-                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#00a8e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <p style="color: #00a8e8; font-weight: 600; margin: 0;">Skill Gap<br>Analysis</p>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        with feat_col3:
-            st.markdown("""
-            <div style="background: rgba(233,69,96,0.1); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(233,69,96,0.3);">
-                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#e94560" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;">
-                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                    <line x1="12" y1="19" x2="12" y2="23"></line>
-                    <line x1="8" y1="23" x2="16" y2="23"></line>
-                </svg>
-                <p style="color: #e94560; font-weight: 600; margin: 0;">Interview<br>Practice</p>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        with feat_col4:
-            st.markdown("""
-            <div style="background: rgba(255,193,7,0.1); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(255,193,7,0.3);">
-                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#ffc107" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;">
-                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                    <line x1="6" y1="20" x2="6" y2="14"></line>
-                </svg>
-                <p style="color: #ffc107; font-weight: 600; margin: 0;">Career<br>Report</p>
-            </div>
-            """, unsafe_allow_html=True)
+        <div style="position: relative; z-index: 1;">
+            <a href="?page=resume" class="btn-primary">Get Started</a>
+            <a href="https://github.com/Neigh-god/ai-career-coach" class="btn-secondary" target="_blank">View on GitHub</a>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
-    with col2:
+    # Features Section
+    st.markdown("<h2 style='text-align: center; margin-bottom: 40px;'>Features</h2>", unsafe_allow_html=True)
+    
+    feat_col1, feat_col2, feat_col3, feat_col4 = st.columns(4)
+    
+    with feat_col1:
         st.markdown("""
-        <div style="background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);">
+        <div class="feature-card" style="--accent-color: #00d4aa;">
+            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="#00d4aa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            <p class="feature-title">Resume<br>Analyzer</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with feat_col2:
+        st.markdown("""
+        <div class="feature-card" style="--accent-color: #00a8e8;">
+            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="#00a8e8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <p class="feature-title">Skill Gap<br>Analysis</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with feat_col3:
+        st.markdown("""
+        <div class="feature-card" style="--accent-color: #e94560;">
+            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="#e94560" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                <line x1="12" y1="19" x2="12" y2="23"></line>
+                <line x1="8" y1="23" x2="16" y2="23"></line>
+            </svg>
+            <p class="feature-title">Interview<br>Practice</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with feat_col4:
+        st.markdown("""
+        <div class="feature-card" style="--accent-color: #ffc107;">
+            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="#ffc107" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            <p class="feature-title">Career<br>Report</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Stats Section
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        st.markdown("""
+        <div class="stats-section">
             <h3 style="color: #00d4aa; margin-top: 0;">Quick Stats</h3>
-            <p style="color: #8892b0;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00d4aa" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
+            <div class="stat-item">
+                <svg class="stat-icon" style="--accent-color: #00d4aa;" viewBox="0 0 24 24" fill="none" stroke="#00d4aa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
                 </svg>
                 Get started in seconds
-            </p>
-            <p style="color: #8892b0;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e94560" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
+            </div>
+            <div class="stat-item">
+                <svg class="stat-icon" style="--accent-color: #e94560;" viewBox="0 0 24 24" fill="none" stroke="#e94560" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <circle cx="12" cy="12" r="3"></circle>
                 </svg>
                 Target any tech role
-            </p>
-            <p style="color: #8892b0;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00a8e8" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
+            </div>
+            <div class="stat-item">
+                <svg class="stat-icon" style="--accent-color: #00a8e8;" viewBox="0 0 24 24" fill="none" stroke="#00a8e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                 </svg>
                 Track your progress
-            </p>
-            <p style="color: #8892b0;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffc107" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
+            </div>
+            <div class="stat-item">
+                <svg class="stat-icon" style="--accent-color: #ffc107;" viewBox="0 0 24 24" fill="none" stroke="#ffc107" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10S2 17.523 2 12 2 2 12 2z"></path>
                     <path d="M12 6v6l4 2"></path>
                 </svg>
                 AI-powered feedback
-            </p>
-            <br>
-            <p style="color: #00d4aa; font-size: 0.9rem; font-weight: 600;">
-                Select a feature from the sidebar to begin →
-            </p>
+            </div>
         </div>
         """, unsafe_allow_html=True)
+    
+    with col2:
+        # API Status
+        try:
+            response = requests.get(f"{API_URL}/health", timeout=3)
+            if response.status_code == 200:
+                st.markdown("""
+                <div style="background: rgba(0,212,170,0.1); padding: 20px; border-radius: 15px; border: 1px solid rgba(0,212,170,0.3); text-align: center;">
+                    <div style="width: 12px; height: 12px; background: #00d4aa; border-radius: 50%; display: inline-block; margin-right: 8px; animation: pulse 2s infinite;"></div>
+                    <span style="color: #00d4aa; font-weight: 600;">API Connected</span>
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                st.warning("API Issue")
+        except:
+            st.error("API Offline")
 
 # ========== RESUME ANALYZER ==========
-elif page == "Resume Analyzer":
+elif page == "resume":
     st.markdown("<h1>Resume Analyzer</h1>", unsafe_allow_html=True)
     st.markdown("<p style='color: #8892b0;'>Upload your resume and get instant ATS feedback</p>", unsafe_allow_html=True)
     
@@ -265,7 +487,7 @@ elif page == "Resume Analyzer":
                     })
 
 # ========== INTERVIEW PRACTICE ==========
-elif page == "Interview Practice":
+elif page == "interview":
     st.markdown("<h1>Interview Practice</h1>", unsafe_allow_html=True)
     st.markdown("<p style='color: #8892b0;'>Practice with AI-generated questions and get instant feedback</p>", unsafe_allow_html=True)
     
@@ -380,7 +602,7 @@ elif page == "Interview Practice":
                 st.rerun()
 
 # ========== CAREER REPORT ==========
-elif page == "Career Report":
+elif page == "report":
     st.markdown("<h1>Career Report</h1>", unsafe_allow_html=True)
     st.markdown("<p style='color: #8892b0;'>Generate a comprehensive career readiness report</p>", unsafe_allow_html=True)
     
@@ -504,7 +726,7 @@ elif page == "Career Report":
                 st.error(f"{str(e)}")
 
 # ========== ABOUT PAGE ==========
-elif page == "About":
+elif page == "about":
     # App Header
     st.markdown("""
     <div style="text-align: center; padding: 20px 0;">
