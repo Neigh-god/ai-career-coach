@@ -90,32 +90,50 @@ if page == "🏠 Home":
         with feat_col1:
             st.markdown("""
             <div style="background: rgba(0,212,170,0.1); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(0,212,170,0.3);">
-                <h2 style="font-size: 2rem; margin: 0;">📄</h2>
-                <p style="color: #00d4aa; font-weight: 600; margin: 10px 0 0 0;">Resume<br>Analyzer</p>
+                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#00d4aa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                <p style="color: #00d4aa; font-weight: 600; margin: 0;">Resume<br>Analyzer</p>
             </div>
             """, unsafe_allow_html=True)
         
         with feat_col2:
             st.markdown("""
             <div style="background: rgba(0,168,232,0.1); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(0,168,232,0.3);">
-                <h2 style="font-size: 2rem; margin: 0;">🔍</h2>
-                <p style="color: #00a8e8; font-weight: 600; margin: 10px 0 0 0;">Skill Gap<br>Analysis</p>
+                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#00a8e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <p style="color: #00a8e8; font-weight: 600; margin: 0;">Skill Gap<br>Analysis</p>
             </div>
             """, unsafe_allow_html=True)
         
         with feat_col3:
             st.markdown("""
             <div style="background: rgba(233,69,96,0.1); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(233,69,96,0.3);">
-                <h2 style="font-size: 2rem; margin: 0;">🎤</h2>
-                <p style="color: #e94560; font-weight: 600; margin: 10px 0 0 0;">Interview<br>Practice</p>
+                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#e94560" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;">
+                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                    <line x1="12" y1="19" x2="12" y2="23"></line>
+                    <line x1="8" y1="23" x2="16" y2="23"></line>
+                </svg>
+                <p style="color: #e94560; font-weight: 600; margin: 0;">Interview<br>Practice</p>
             </div>
             """, unsafe_allow_html=True)
         
         with feat_col4:
             st.markdown("""
             <div style="background: rgba(255,193,7,0.1); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(255,193,7,0.3);">
-                <h2 style="font-size: 2rem; margin: 0;">📊</h2>
-                <p style="color: #ffc107; font-weight: 600; margin: 10px 0 0 0;">Career<br>Report</p>
+                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#ffc107" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <p style="color: #ffc107; font-weight: 600; margin: 0;">Career<br>Report</p>
             </div>
             """, unsafe_allow_html=True)
     
