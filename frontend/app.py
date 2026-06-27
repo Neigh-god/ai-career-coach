@@ -60,6 +60,7 @@ st.markdown("""
         background-size: 300% 300%;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        background-clip: text;
         animation: gradient-shift 5s ease infinite;
         margin-bottom: 20px;
         position: relative;
@@ -270,8 +271,8 @@ page = query_params.get("page", "home")
 
 # ========== HOME PAGE ==========
 if page == "home":
-    # Hero Section
-    st.markdown("""
+    # Hero Section - FIXED: Use st.components.v1.html for complex HTML
+    hero_html = """
     <div class="hero-section">
         <div class="particle" style="top: 20%; left: 10%; animation-delay: 0s;"></div>
         <div class="particle" style="top: 60%; left: 80%; animation-delay: 1s;"></div>
@@ -290,10 +291,11 @@ if page == "home":
             <a href="https://github.com/Neigh-god/ai-career-coach" class="btn-secondary" target="_blank">View on GitHub</a>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """
+    st.components.v1.html(hero_html, height=400, scrolling=False)
     
     # Features Section
-    st.markdown("<h2 style='text-align: center; margin-bottom: 40px;'>Features</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; margin-bottom: 40px; color: #e94560;'>Features</h2>", unsafe_allow_html=True)
     
     feat_col1, feat_col2, feat_col3, feat_col4 = st.columns(4)
     
@@ -684,7 +686,7 @@ elif page == "report":
                                 st.markdown(f"""
                                 <div style="background: rgba(233,69,96,0.1); padding: 12px 20px; border-radius: 8px; margin: 8px 0; 
                                             border-left: 3px solid #e94560; display: flex; align-items: center;">
-                                    <span style="font-size: 1.2rem; margin-right: 10px;">X</span>
+                                    <span style="font-size: 1.2rem; margin-right: 10px;">❌</span>
                                     <span style="color: white; font-weight: 500;">{skill}</span>
                                 </div>
                                 """, unsafe_allow_html=True)
