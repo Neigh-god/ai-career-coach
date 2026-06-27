@@ -25,7 +25,7 @@ st.markdown("""
         background: linear-gradient(135deg, #0a0a1a 0%, #12122a 50%, #0d1b2a 100%);
     }
     
-    /* Hero Section */
+    /* Hero Section - All styles kept for reference but we'll use inline styles */
     .hero-section {
         background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #16213e 100%);
         padding: 80px 40px;
@@ -271,28 +271,25 @@ page = query_params.get("page", "home")
 
 # ========== HOME PAGE ==========
 if page == "home":
-    # Hero Section - FIXED: Use st.components.v1.html for complex HTML
-    hero_html = """
-    <div class="hero-section">
-        <div class="particle" style="top: 20%; left: 10%; animation-delay: 0s;"></div>
-        <div class="particle" style="top: 60%; left: 80%; animation-delay: 1s;"></div>
-        <div class="particle" style="top: 40%; left: 50%; animation-delay: 2s;"></div>
-        <div class="particle" style="top: 80%; left: 20%; animation-delay: 3s;"></div>
-        <div class="particle" style="top: 30%; left: 70%; animation-delay: 4s;"></div>
+    # Hero Section - FIXED: Use inline styles that work with st.markdown
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #16213e 100%); padding: 80px 40px; border-radius: 24px; text-align: center; margin-bottom: 40px; border: 1px solid rgba(0,212,170,0.15); position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(0,212,170,0.1) 0%, transparent 70%); animation: pulse 4s ease-in-out infinite;"></div>
         
-        <h1 class="hero-title">AI Career Coach</h1>
-        <p class="hero-subtitle">
-            Your personal AI-powered career development assistant. 
-            Analyze resumes, practice interviews, identify skill gaps, 
-            and generate actionable career reports.
-        </p>
         <div style="position: relative; z-index: 1;">
-            <a href="?page=resume" class="btn-primary">Get Started</a>
-            <a href="https://github.com/Neigh-god/ai-career-coach" class="btn-secondary" target="_blank">View on GitHub</a>
+            <h1 style="font-size: 4rem; font-weight: 800; background: linear-gradient(90deg, #00d4aa, #00a8e8, #e94560, #00d4aa); background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: gradient-shift 5s ease infinite; margin-bottom: 20px;">AI Career Coach</h1>
+            <p style="font-size: 1.3rem; color: #8892b0; max-width: 600px; margin: 0 auto 40px; line-height: 1.6;">
+                Your personal AI-powered career development assistant. 
+                Analyze resumes, practice interviews, identify skill gaps, 
+                and generate actionable career reports.
+            </p>
+            <div>
+                <a href="?page=resume" style="background: linear-gradient(90deg, #00d4aa, #00a8e8); color: white; padding: 16px 32px; border-radius: 30px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; display: inline-block; margin: 0 10px;">Get Started</a>
+                <a href="https://github.com/Neigh-god/ai-career-coach" style="background: transparent; color: #00d4aa; padding: 16px 32px; border-radius: 30px; text-decoration: none; font-weight: 600; border: 2px solid #00d4aa; cursor: pointer; transition: all 0.3s ease; display: inline-block; margin: 0 10px;" target="_blank">View on GitHub</a>
+            </div>
         </div>
     </div>
-    """
-    st.components.v1.html(hero_html, height=400, scrolling=False)
+    """, unsafe_allow_html=True)
     
     # Features Section
     st.markdown("<h2 style='text-align: center; margin-bottom: 40px; color: #e94560;'>Features</h2>", unsafe_allow_html=True)
