@@ -56,29 +56,62 @@ class ResumeParser:
 
     @classmethod
     def extract_text(cls, file_path: str) -> str:
+        """Extract text from PDF or DOCX file."""
         text = ""
         file_ext = file_path.lower().split(".")[-1]
         
         if file_ext == "pdf":
-            with pdfplumber.open(file_path) as pdf:
-                for page in pdf.pages:
-                    page_text = page.extract_text()
-                    if page_text:
-                        text += page_text + "\n"
+            text = cls._extract_pdf_text(file_path)
         elif file_ext == "docx":
-            try:
-                import docx
-                doc = docx.Document(file_path)
-                text = "\n".join([para.text for para in doc.paragraphs])
-            except ImportError:
-                raise Exception("python-docx not installed")
+            text = cls._extract_docx_text(file_path)
         else:
             raise Exception(f"Unsupported file type: {file_ext}")
         
         return text
 
     @classmethod
+    def _extract_pdf_text(cls, file_path: str) -> str:
+        """Extract text from PDF with fallback to OCR for image-based PDFs."""
+        text = ""
+        
+        # Try pdfplumber first
+        with pdfplumber.open(file_path) as pdf:
+            for page in pdf.pages:
+                page_text = page.extract_text()
+                if page_text:
+                    text += page_text + "\n"
+        
+        # If no text found, try OCR (pytesseract)
+        if not text.strip():
+            try:
+                from pdf2image import convert_from_path
+                import pytesseract
+                
+                images = convert_from_path(file_path)
+                for image in images:
+                    text += pytesseract.image_to_string(image) + "\n"
+            except ImportError:
+                raise Exception(
+                    "Could not extract text. This appears to be a scanned image PDF. "
+                    "Please upload a text-based PDF or install OCR dependencies: "
+                    "pip install pdf2image pytesseract"
+                )
+        
+        return text
+
+    @classmethod
+    def _extract_docx_text(cls, file_path: str) -> str:
+        """Extract text from DOCX."""
+        try:
+            import docx
+            doc = docx.Document(file_path)
+            return "\n".join([para.text for para in doc.paragraphs])
+        except ImportError:
+            raise Exception("python-docx not installed. Run: pip install python-docx")
+
+    @classmethod
     def extract_phone(cls, text: str) -> Optional[str]:
+        """Extract Indian phone numbers."""
         matches = re.findall(cls.phone_pattern, text)
         
         if matches:
@@ -98,11 +131,13 @@ class ResumeParser:
 
     @classmethod
     def extract_email(cls, text: str) -> Optional[str]:
+        """Extract email."""
         match = re.search(cls.email_pattern, text)
         return match.group(0) if match else None
 
     @classmethod
     def extract_name(cls, text: str) -> Optional[str]:
+        """Extract name from first lines."""
         lines = [line.strip() for line in text.split('\n') if line.strip()]
         skip_words = ['resume', 'cv', 'curriculum', 'vitae']
         
@@ -121,6 +156,7 @@ class ResumeParser:
 
     @classmethod
     def extract_sections(cls, text: str) -> Dict[str, str]:
+        """Extract resume sections."""
         sections = {}
         text_lower = text.lower()
         
@@ -141,6 +177,7 @@ class ResumeParser:
 
     @classmethod
     def extract_skills(cls, text: str) -> List[str]:
+        """Extract skills from text."""
         found = []
         text_lower = text.lower()
         
@@ -161,6 +198,7 @@ class ResumeParser:
 
     @classmethod
     def parse_file(cls, file_path: str) -> ParsedResume:
+        """Main parse function."""
         raw_text = cls.extract_text(file_path)
         
         if not raw_text.strip():
@@ -168,7 +206,6 @@ class ResumeParser:
         
         sections = cls.extract_sections(raw_text)
         
-        # Convert section text to list items for analyzer compatibility
         experience_list = [line.strip() for line in sections.get('experience', '').split('\n') if line.strip() and len(line.strip()) > 10]
         education_list = [line.strip() for line in sections.get('education', '').split('\n') if line.strip() and len(line.strip()) > 5]
         projects_list = [line.strip() for line in sections.get('projects', '').split('\n') if line.strip() and len(line.strip()) > 5]
