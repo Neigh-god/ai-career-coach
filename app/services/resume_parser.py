@@ -37,10 +37,10 @@ class ResumeParser:
         r'0[6-9]\d{9}',                      
         r'91[6-9]\d{9}',                     
     ]
-    
+
     email_pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
     
-       section_patterns = {
+    section_patterns = {
         'summary': r'\b(?:professional\s+)?summary\b|\bobjective\b|\bprofile\b|\babout\s+me\b',
         'experience': r'\bexperience\b|\bemployment\b|\bwork\s+history\b|\bprofessional\s+experience\b|\bwork\s+experience\b',
         'education': r'\beducation\b|\bacademic\b|\bqualifications\b|\beducational\s+background\b',
@@ -49,6 +49,7 @@ class ResumeParser:
         'certifications': r'\bcertifications\b|\bcertificates\b|\blicenses\b',
         'achievements': r'\bachievements\b|\bawards\b|\bhonors\b|\bleadership\b|\baccomplishments\b',
     }
+    
     skill_keywords = [
         'python', 'java', 'javascript', 'js', 'typescript', 'html', 'css', 'react',
         'node', 'sql', 'mysql', 'postgresql', 'mongodb', 'aws', 'docker', 'git',
@@ -64,7 +65,6 @@ class ResumeParser:
 
     @classmethod
     def extract_text(cls, file_path: str) -> str:
-        """Extract text from PDF or DOCX file."""
         text = ""
         file_ext = file_path.lower().split(".")[-1]
         
@@ -79,7 +79,6 @@ class ResumeParser:
 
     @classmethod
     def _extract_pdf_text(cls, file_path: str) -> str:
-        """Extract text from PDF."""
         text = ""
         
         with pdfplumber.open(file_path) as pdf:
@@ -88,19 +87,16 @@ class ResumeParser:
                 if page_text:
                     text += page_text + "\n"
         
-        # Normalize whitespace - replace multiple spaces/newlines with single space
         text = ' '.join(text.split())
         
         return text
 
     @classmethod
     def _extract_docx_text(cls, file_path: str) -> str:
-        """Extract text from DOCX."""
         try:
             import docx
             doc = docx.Document(file_path)
             text = "\n".join([para.text for para in doc.paragraphs])
-            # Normalize whitespace
             text = ' '.join(text.split())
             return text
         except ImportError:
@@ -108,31 +104,22 @@ class ResumeParser:
 
     @classmethod
     def extract_phone(cls, text: str) -> Optional[str]:
-        """Extract Indian phone numbers - tries multiple patterns."""
-        # First, try to find +91 followed by digits (with any spacing)
-        plus91_pattern = r'\+91\s*\d{5}\s*\d{5}'
-        match = re.search(plus91_pattern, text)
+        match = re.search(r'\+91\s*\d{5}\s*\d{5}', text)
         if match:
             digits = re.sub(r'\D', '', match.group())
             return f"+91 {digits[-10:-5]} {digits[-5:]}"
         
-        # Try +91 with 10 consecutive digits
-        plus91_no_space = r'\+91\s*([6-9]\d{9})'
-        match = re.search(plus91_no_space, text)
+        match = re.search(r'\+91\s*([6-9]\d{9})', text)
         if match:
             digits = match.group(1)
             return f"+91 {digits[:5]} {digits[5:]}"
         
-        # Try 10 digits starting with 6-9
-        ten_digit = r'\b([6-9]\d{9})\b'
-        match = re.search(ten_digit, text)
+        match = re.search(r'\b([6-9]\d{9})\b', text)
         if match:
             digits = match.group(1)
             return f"+91 {digits[:5]} {digits[5:]}"
         
-        # Try with 0 prefix
-        zero_prefix = r'\b0([6-9]\d{9})\b'
-        match = re.search(zero_prefix, text)
+        match = re.search(r'\b0([6-9]\d{9})\b', text)
         if match:
             digits = match.group(1)
             return f"+91 {digits[:5]} {digits[5:]}"
@@ -141,13 +128,11 @@ class ResumeParser:
 
     @classmethod
     def extract_email(cls, text: str) -> Optional[str]:
-        """Extract email."""
         match = re.search(cls.email_pattern, text)
         return match.group(0) if match else None
 
     @classmethod
     def extract_name(cls, text: str) -> Optional[str]:
-        """Extract name from first lines."""
         lines = [line.strip() for line in text.split('\n') if line.strip()]
         skip_words = ['resume', 'cv', 'curriculum', 'vitae']
         
@@ -166,7 +151,6 @@ class ResumeParser:
 
     @classmethod
     def extract_sections(cls, text: str) -> Dict[str, str]:
-        """Extract resume sections."""
         sections = {}
         text_lower = text.lower()
         
@@ -187,7 +171,6 @@ class ResumeParser:
 
     @classmethod
     def extract_skills(cls, text: str) -> List[str]:
-        """Extract skills from text."""
         found = []
         text_lower = text.lower()
         
@@ -208,7 +191,6 @@ class ResumeParser:
 
     @classmethod
     def parse_file(cls, file_path: str) -> ParsedResume:
-        """Main parse function."""
         raw_text = cls.extract_text(file_path)
         
         if not raw_text.strip():
