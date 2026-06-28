@@ -20,7 +20,7 @@ MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 ALLOWED_TYPES = [".pdf", ".docx"]
 
 
-@router.post("/upload", response_model=ResumeUploadResponse)
+@router.post("/upload")
 async def upload_resume(
     file: UploadFile = File(...),
     user_id: Optional[str] = None,
@@ -99,10 +99,28 @@ async def upload_resume(
             "suggestions": score.suggestions
         }
 
+                # FIX: Convert dataclass to dict for response
         return {
             "resume_id": resume_id,
-            "parsed_data": parsed_dict,
-            "score": score_dict,
+            "parsed_data": {
+                "raw_text": parsed.raw_text,
+                "name": parsed.name,
+                "email": parsed.email,
+                "phone": parsed.phone,
+                "skills": parsed.skills,
+                "experience": parsed.experience,
+                "education": parsed.education,
+                "projects": parsed.projects,
+                "sections": parsed.sections
+            },
+            "score": {
+                "overall_score": score.overall_score,
+                "section_scores": score.section_scores,
+                "missing_sections": score.missing_sections,
+                "strengths": score.strengths,
+                "weaknesses": score.weaknesses,
+                "suggestions": score.suggestions
+            },
             "uploaded_at": datetime.utcnow()
         }
 
