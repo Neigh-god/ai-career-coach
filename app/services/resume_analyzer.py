@@ -112,25 +112,32 @@ class ResumeAnalyzer:
         return weaknesses
 
     @classmethod
-    def _find_missing_sections(cls, text: str) -> List[str]:
-        missing = []
-        text_lower = text.lower()
-        
-        section_keywords = {
-            "summary": ["summary", "objective", "profile", "about me"],
-            "experience": ["experience", "work history", "employment", "professional experience"],
-            "education": ["education", "academic", "degree", "university"],
-            "skills": ["skills", "technical skills", "competencies", "technologies"],
-            "projects": ["projects", "portfolio", "personal projects"],
-            "certifications": ["certifications", "certificates", "credentials"]
-        }
-        
-        for section, keywords in section_keywords.items():
-            found = any(kw in text_lower for kw in keywords)
-            if not found:
-                missing.append(section)
-        
-        return missing
+def _find_missing_sections(cls, text: str) -> List[str]:
+    missing = []
+    text_lower = text.lower()
+    
+    # More flexible matching
+    has_experience = any(kw in text_lower for kw in ['experience', 'employment', 'work', 'founder', 'co-founder', 'internship'])
+    has_education = any(kw in text_lower for kw in ['education', 'academic', 'degree', 'university', 'college', 'school'])
+    has_skills = any(kw in text_lower for kw in ['skills', 'technical', 'competencies'])
+    has_projects = any(kw in text_lower for kw in ['projects', 'portfolio'])
+    has_summary = any(kw in text_lower for kw in ['summary', 'objective', 'profile'])
+    has_certifications = any(kw in text_lower for kw in ['certifications', 'certificates'])
+    
+    if not has_summary:
+        missing.append("summary")
+    if not has_experience:
+        missing.append("experience")
+    if not has_education:
+        missing.append("education")
+    if not has_skills:
+        missing.append("skills")
+    if not has_projects:
+        missing.append("projects")
+    if not has_certifications:
+        missing.append("certifications")
+    
+    return missing
 
     @classmethod
     def _generate_suggestions(cls, weaknesses: List[str], missing_sections: List[str]) -> List[str]:
