@@ -52,6 +52,11 @@ async def upload_resume(
 
         # Parse and analyze
         parsed: ParsedResume = ResumeParser.parse_file(tmp_path)
+           # DEBUG
+        print("=" * 50)
+        print("RAW TEXT:", parsed.raw_text[:1000])
+        print("SECTIONS FOUND:", list(parsed.sections.keys()))
+        print("=" * 50)
         score: ResumeScore = ResumeAnalyzer.analyze(parsed)
 
         resume_id = str(uuid4())

@@ -40,16 +40,15 @@ class ResumeParser:
     
     email_pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
     
-    section_patterns = {
-        'summary': r'(?:professional\s+)?summary|objective|profile|about\s+me',
-        'experience': r'experience|employment|work\s+history|professional\s+experience|work\s+experience',
-        'education': r'education|academic|qualifications|educational\s+background',
-        'skills': r'skills|technical\s+skills|core\s+competencies|expertise',
-        'projects': r'projects|personal\s+projects|academic\s+projects',
-        'certifications': r'certifications|certificates|licenses',
-        'achievements': r'achievements|awards|honors|leadership|accomplishments',
+       section_patterns = {
+        'summary': r'\b(?:professional\s+)?summary\b|\bobjective\b|\bprofile\b|\babout\s+me\b',
+        'experience': r'\bexperience\b|\bemployment\b|\bwork\s+history\b|\bprofessional\s+experience\b|\bwork\s+experience\b',
+        'education': r'\beducation\b|\bacademic\b|\bqualifications\b|\beducational\s+background\b',
+        'skills': r'\bskills\b|\btechnical\s+skills\b|\bcore\s+competencies\b|\bexpertise\b',
+        'projects': r'\bprojects\b|\bpersonal\s+projects\b|\bacademic\s+projects\b',
+        'certifications': r'\bcertifications\b|\bcertificates\b|\blicenses\b',
+        'achievements': r'\bachievements\b|\bawards\b|\bhonors\b|\bleadership\b|\baccomplishments\b',
     }
-    
     skill_keywords = [
         'python', 'java', 'javascript', 'js', 'typescript', 'html', 'css', 'react',
         'node', 'sql', 'mysql', 'postgresql', 'mongodb', 'aws', 'docker', 'git',
