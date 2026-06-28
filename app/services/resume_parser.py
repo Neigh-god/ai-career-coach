@@ -28,7 +28,16 @@ class ResumeScore:
 
 
 class ResumeParser:
-    phone_pattern = r'(?:\+91[\-\s]?)?[6-9]\d{9}'
+    # Multiple patterns to catch various Indian phone formats
+    phone_patterns = [
+        r'\+91\s*\d{5}\s*\d{5}',           
+        r'\+91\s*\d{10}',                    
+        r'\+91[-\s]?\d{5}[-\s]?\d{5}',      
+        r'[6-9]\d{9}',                       
+        r'0[6-9]\d{9}',                      
+        r'91[6-9]\d{9}',                     
+    ]
+    
     email_pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
     
     section_patterns = {
@@ -71,31 +80,17 @@ class ResumeParser:
 
     @classmethod
     def _extract_pdf_text(cls, file_path: str) -> str:
-        """Extract text from PDF with fallback to OCR for image-based PDFs."""
+        """Extract text from PDF."""
         text = ""
         
-        # Try pdfplumber first
         with pdfplumber.open(file_path) as pdf:
             for page in pdf.pages:
                 page_text = page.extract_text()
                 if page_text:
                     text += page_text + "\n"
         
-        # If no text found, try OCR (pytesseract)
-        if not text.strip():
-            try:
-                from pdf2image import convert_from_path
-                import pytesseract
-                
-                images = convert_from_path(file_path)
-                for image in images:
-                    text += pytesseract.image_to_string(image) + "\n"
-            except ImportError:
-                raise Exception(
-                    "Could not extract text. This appears to be a scanned image PDF. "
-                    "Please upload a text-based PDF or install OCR dependencies: "
-                    "pip install pdf2image pytesseract"
-                )
+        # Normalize whitespace - replace multiple spaces/newlines with single space
+        text = ' '.join(text.split())
         
         return text
 
@@ -105,27 +100,43 @@ class ResumeParser:
         try:
             import docx
             doc = docx.Document(file_path)
-            return "\n".join([para.text for para in doc.paragraphs])
+            text = "\n".join([para.text for para in doc.paragraphs])
+            # Normalize whitespace
+            text = ' '.join(text.split())
+            return text
         except ImportError:
             raise Exception("python-docx not installed. Run: pip install python-docx")
 
     @classmethod
     def extract_phone(cls, text: str) -> Optional[str]:
-        """Extract Indian phone numbers."""
-        matches = re.findall(cls.phone_pattern, text)
+        """Extract Indian phone numbers - tries multiple patterns."""
+        # First, try to find +91 followed by digits (with any spacing)
+        plus91_pattern = r'\+91\s*\d{5}\s*\d{5}'
+        match = re.search(plus91_pattern, text)
+        if match:
+            digits = re.sub(r'\D', '', match.group())
+            return f"+91 {digits[-10:-5]} {digits[-5:]}"
         
-        if matches:
-            best_match = max(matches, key=len)
-            digits = re.sub(r'\D', '', best_match)
-            
-            if len(digits) == 10:
-                return f"+91 {digits[:5]} {digits[5:]}"
-            elif len(digits) == 11 and digits.startswith('0'):
-                return f"+91 {digits[1:6]} {digits[6:]}"
-            elif len(digits) == 12 and digits.startswith('91'):
-                return f"+91 {digits[2:7]} {digits[7:]}"
-            
-            return best_match
+        # Try +91 with 10 consecutive digits
+        plus91_no_space = r'\+91\s*([6-9]\d{9})'
+        match = re.search(plus91_no_space, text)
+        if match:
+            digits = match.group(1)
+            return f"+91 {digits[:5]} {digits[5:]}"
+        
+        # Try 10 digits starting with 6-9
+        ten_digit = r'\b([6-9]\d{9})\b'
+        match = re.search(ten_digit, text)
+        if match:
+            digits = match.group(1)
+            return f"+91 {digits[:5]} {digits[5:]}"
+        
+        # Try with 0 prefix
+        zero_prefix = r'\b0([6-9]\d{9})\b'
+        match = re.search(zero_prefix, text)
+        if match:
+            digits = match.group(1)
+            return f"+91 {digits[:5]} {digits[5:]}"
         
         return None
 
