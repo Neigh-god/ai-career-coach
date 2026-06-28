@@ -37,17 +37,16 @@ class ResumeParser:
         r'0[6-9]\d{9}',                      
         r'91[6-9]\d{9}',                     
     ]
-
     email_pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
     
     section_patterns = {
-        'summary': r'\b(?:professional\s+)?summary\b|\bobjective\b|\bprofile\b|\babout\s+me\b',
-        'experience': r'\bexperience\b|\bemployment\b|\bwork\s+history\b|\bprofessional\s+experience\b|\bwork\s+experience\b',
-        'education': r'\beducation\b|\bacademic\b|\bqualifications\b|\beducational\s+background\b',
-        'skills': r'\bskills\b|\btechnical\s+skills\b|\bcore\s+competencies\b|\bexpertise\b',
-        'projects': r'\bprojects\b|\bpersonal\s+projects\b|\bacademic\s+projects\b',
-        'certifications': r'\bcertifications\b|\bcertificates\b|\blicenses\b',
-        'achievements': r'\bachievements\b|\bawards\b|\bhonors\b|\bleadership\b|\baccomplishments\b',
+        'summary': r'(?:professional\s+)?summary|objective|profile|about\s+me',
+        'experience': r'experience|employment|work\s+history|professional\s+experience|work\s+experience',
+        'education': r'education|academic|qualifications|educational\s+background',
+        'skills': r'skills|technical\s+skills|core\s+competencies|expertise',
+        'projects': r'projects|personal\s+projects|academic\s+projects',
+        'certifications': r'certifications|certificates|licenses',
+        'achievements': r'achievements|awards|honors|leadership|accomplishments',
     }
     
     skill_keywords = [
@@ -87,7 +86,10 @@ class ResumeParser:
                 if page_text:
                     text += page_text + "\n"
         
-        text = ' '.join(text.split())
+        # Clean up spaces within lines but keep newlines for section detection
+        lines = text.split('\n')
+        cleaned_lines = [' '.join(line.split()) for line in lines]
+        text = '\n'.join(cleaned_lines)
         
         return text
 
@@ -97,7 +99,9 @@ class ResumeParser:
             import docx
             doc = docx.Document(file_path)
             text = "\n".join([para.text for para in doc.paragraphs])
-            text = ' '.join(text.split())
+            lines = text.split('\n')
+            cleaned_lines = [' '.join(line.split()) for line in lines]
+            text = '\n'.join(cleaned_lines)
             return text
         except ImportError:
             raise Exception("python-docx not installed. Run: pip install python-docx")
@@ -152,20 +156,32 @@ class ResumeParser:
     @classmethod
     def extract_sections(cls, text: str) -> Dict[str, str]:
         sections = {}
-        text_lower = text.lower()
+        lines = text.split('\n')
         
-        positions = []
-        for section_name, pattern in cls.section_patterns.items():
-            for match in re.finditer(pattern, text_lower, re.IGNORECASE):
-                positions.append((match.start(), section_name))
+        # Find section headers (lines that match section patterns)
+        section_starts = {}
         
-        positions.sort()
+        for i, line in enumerate(lines):
+            line_clean = line.strip().lower()
+            line_clean = re.sub(r'[_\-=\*]+', '', line_clean).strip()
+            
+            for section_name, pattern in cls.section_patterns.items():
+                if re.match(r'^' + pattern + r'$', line_clean, re.IGNORECASE):
+                    if section_name not in section_starts:
+                        section_starts[section_name] = i
         
-        for i, (start, name) in enumerate(positions):
-            end = positions[i+1][0] if i+1 < len(positions) else len(text)
-            section_text = text[start:end].strip()
-            lines = section_text.split('\n')
-            sections[name] = '\n'.join(lines[1:]).strip() if len(lines) > 1 else ""
+        # Extract content between sections
+        sorted_sections = sorted(section_starts.items(), key=lambda x: x[1])
+        
+        for idx, (section_name, start_line) in enumerate(sorted_sections):
+            if idx + 1 < len(sorted_sections):
+                end_line = sorted_sections[idx + 1][1]
+            else:
+                end_line = len(lines)
+            
+            content_lines = lines[start_line + 1:end_line]
+            content = '\n'.join(content_lines).strip()
+            sections[section_name] = content
         
         return sections
 
